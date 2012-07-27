@@ -15,6 +15,7 @@
 		D553040C15C2702500AAFD0C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D553040B15C2702500AAFD0C /* AppDelegate.m */; };
 		D553040F15C2702500AAFD0C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D553040E15C2702500AAFD0C /* ViewController.m */; };
 		D553041215C2702500AAFD0C /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D553041015C2702500AAFD0C /* ViewController.xib */; };
+		D553042415C2711200AAFD0C /* BPBLaunchScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = D553042215C2711200AAFD0C /* BPBLaunchScrollView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,8 @@
 		D553040D15C2702500AAFD0C /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		D553040E15C2702500AAFD0C /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		D553041115C2702500AAFD0C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController.xib; sourceTree = "<group>"; };
+		D553042215C2711200AAFD0C /* BPBLaunchScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BPBLaunchScrollView.m; path = class/BPBLaunchScrollView.m; sourceTree = "<group>"; };
+		D553042315C2711200AAFD0C /* BPBLaunchScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPBLaunchScrollView.h; path = class/BPBLaunchScrollView.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +80,7 @@
 		D553040115C2702500AAFD0C /* bpblaunch */ = {
 			isa = PBXGroup;
 			children = (
+				D553042015C270D500AAFD0C /* class */,
 				D553040A15C2702500AAFD0C /* AppDelegate.h */,
 				D553040B15C2702500AAFD0C /* AppDelegate.m */,
 				D553040D15C2702500AAFD0C /* ViewController.h */,
@@ -96,6 +100,15 @@
 				D553040915C2702500AAFD0C /* bpblaunch-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D553042015C270D500AAFD0C /* class */ = {
+			isa = PBXGroup;
+			children = (
+				D553042215C2711200AAFD0C /* BPBLaunchScrollView.m */,
+				D553042315C2711200AAFD0C /* BPBLaunchScrollView.h */,
+			);
+			name = class;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,6 +177,7 @@
 				D553040815C2702500AAFD0C /* main.m in Sources */,
 				D553040C15C2702500AAFD0C /* AppDelegate.m in Sources */,
 				D553040F15C2702500AAFD0C /* ViewController.m in Sources */,
+				D553042415C2711200AAFD0C /* BPBLaunchScrollView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,6 +293,7 @@
 				D553041715C2702500AAFD0C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
