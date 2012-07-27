@@ -1,15 +1,13 @@
 //
 //  BPBLaunchControllerViewController.m
-//  lovesearch
+//  bpblaunch
 //
-//  Created by 韩 鑫 on 7/9/12.
+//  Created by BigPolarBear on 7/9/12.
 //
 //
 
 #import "BPBLaunchScrollView.h"
-//#import "HJManagedImageV.h"
-#import "HJManagedButton.h"
-#import "NetManager.h"
+#import "BPBTool.h"
 
 #define icon_width      57
 #define icon_height     57
@@ -144,7 +142,7 @@
         NSLog(@"iCnt:%d (%f,%f)",iCnt,centerX,centerY);
         
         // 增加图标按钮
-        HJManagedButton* buttonIcon = [[HJManagedButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
+        UIButton* buttonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
         // tag记录下序号
         buttonIcon.tag = iCnt;
         // 增加点击事件
@@ -152,12 +150,39 @@
         
         // 设置图标图片
         NSString* imgUrl = [self.launchDataSource imageUrlAtIndex:iCnt];
-        [buttonIcon setImage:self.defaultIconImage forState:UIControlStateNormal];
-        buttonIcon.url = [NSURL URLWithString:imgUrl];
-        [[NetManager sharedManager].objMan manage:buttonIcon];
-        
+        if(self.defaultIconImage)
+        {
+            [buttonIcon setImage:self.defaultIconImage forState:UIControlStateNormal];
+        }
+        [BPBTool loadRemoteImage:imgUrl usingCache:YES completion:^(BOOL success, UIImage *image, NSError *error) {
+           if(success)
+           {
+               // 增加图标按钮
+               UIButton* newButtonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
+               // tag记录下序号
+               newButtonIcon.tag = iCnt;
+               // 增加点击事件
+               [newButtonIcon addTarget:self action:@selector(iconClicked:) forControlEvents:UIControlEventTouchUpInside];
+               newButtonIcon.alpha = 0;
+               [newButtonIcon setImage:image forState:UIControlStateNormal];
+               [labelBackground addSubview:newButtonIcon];
+               
+               [UIView animateWithDuration:1 animations:^{
+                   newButtonIcon.alpha = 1;
+                   buttonIcon.alpha = 0;
+               } completion:^(BOOL finished) {
+                   if(buttonIcon.superview)
+                   {
+                       [buttonIcon removeFromSuperview];
+                   }
+                   else
+                   {
+                       NSLog(@"buttonIcon.superview is nil");
+                   }
+               }];
+           }
+        }];
         [labelBackground addSubview:buttonIcon];
-        
         
         // 增加文字
         UILabel* labelTitle = [[UILabel alloc]initWithFrame:CGRectMake(0, icon_height + between_title_icon, title_width, title_height)];

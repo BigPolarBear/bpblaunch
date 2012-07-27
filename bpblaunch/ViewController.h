@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BPBLaunchScrollView.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<BPBLaunchScrollViewDataSource,BPBLaunchScrollViewDelegate>
 
 @end

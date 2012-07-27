@@ -16,6 +16,8 @@
 		D553040F15C2702500AAFD0C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D553040E15C2702500AAFD0C /* ViewController.m */; };
 		D553041215C2702500AAFD0C /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D553041015C2702500AAFD0C /* ViewController.xib */; };
 		D553042415C2711200AAFD0C /* BPBLaunchScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = D553042215C2711200AAFD0C /* BPBLaunchScrollView.m */; };
+		D553042B15C273F800AAFD0C /* BPBTool.m in Sources */ = {isa = PBXBuildFile; fileRef = D553042A15C273F800AAFD0C /* BPBTool.m */; };
+		D553043815C2840500AAFD0C /* gravatar.png in Resources */ = {isa = PBXBuildFile; fileRef = D553043715C2840500AAFD0C /* gravatar.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,9 @@
 		D553041115C2702500AAFD0C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController.xib; sourceTree = "<group>"; };
 		D553042215C2711200AAFD0C /* BPBLaunchScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BPBLaunchScrollView.m; path = class/BPBLaunchScrollView.m; sourceTree = "<group>"; };
 		D553042315C2711200AAFD0C /* BPBLaunchScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPBLaunchScrollView.h; path = class/BPBLaunchScrollView.h; sourceTree = "<group>"; };
+		D553042915C273F800AAFD0C /* BPBTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPBTool.h; path = class/BPBTool.h; sourceTree = "<group>"; };
+		D553042A15C273F800AAFD0C /* BPBTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BPBTool.m; path = class/BPBTool.m; sourceTree = "<group>"; };
+		D553043715C2840500AAFD0C /* gravatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gravatar.png; path = resource/gravatar.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,11 +86,8 @@
 			isa = PBXGroup;
 			children = (
 				D553042015C270D500AAFD0C /* class */,
-				D553040A15C2702500AAFD0C /* AppDelegate.h */,
-				D553040B15C2702500AAFD0C /* AppDelegate.m */,
-				D553040D15C2702500AAFD0C /* ViewController.h */,
-				D553040E15C2702500AAFD0C /* ViewController.m */,
-				D553041015C2702500AAFD0C /* ViewController.xib */,
+				D553043115C27ADB00AAFD0C /* demo-iphone */,
+				D553043615C283D500AAFD0C /* resource */,
 				D553040215C2702500AAFD0C /* Supporting Files */,
 			);
 			path = bpblaunch;
@@ -105,10 +107,32 @@
 		D553042015C270D500AAFD0C /* class */ = {
 			isa = PBXGroup;
 			children = (
-				D553042215C2711200AAFD0C /* BPBLaunchScrollView.m */,
+				D553042915C273F800AAFD0C /* BPBTool.h */,
+				D553042A15C273F800AAFD0C /* BPBTool.m */,
 				D553042315C2711200AAFD0C /* BPBLaunchScrollView.h */,
+				D553042215C2711200AAFD0C /* BPBLaunchScrollView.m */,
 			);
 			name = class;
+			sourceTree = "<group>";
+		};
+		D553043115C27ADB00AAFD0C /* demo-iphone */ = {
+			isa = PBXGroup;
+			children = (
+				D553040A15C2702500AAFD0C /* AppDelegate.h */,
+				D553040B15C2702500AAFD0C /* AppDelegate.m */,
+				D553040D15C2702500AAFD0C /* ViewController.h */,
+				D553040E15C2702500AAFD0C /* ViewController.m */,
+				D553041015C2702500AAFD0C /* ViewController.xib */,
+			);
+			name = "demo-iphone";
+			sourceTree = "<group>";
+		};
+		D553043615C283D500AAFD0C /* resource */ = {
+			isa = PBXGroup;
+			children = (
+				D553043715C2840500AAFD0C /* gravatar.png */,
+			);
+			name = resource;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,6 +188,7 @@
 			files = (
 				D553040615C2702500AAFD0C /* InfoPlist.strings in Resources */,
 				D553041215C2702500AAFD0C /* ViewController.xib in Resources */,
+				D553043815C2840500AAFD0C /* gravatar.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -178,6 +203,7 @@
 				D553040C15C2702500AAFD0C /* AppDelegate.m in Sources */,
 				D553040F15C2702500AAFD0C /* ViewController.m in Sources */,
 				D553042415C2711200AAFD0C /* BPBLaunchScrollView.m in Sources */,
+				D553042B15C273F800AAFD0C /* BPBTool.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

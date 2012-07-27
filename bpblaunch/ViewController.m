@@ -10,6 +10,8 @@
 
 @interface ViewController ()
 
+@property (nonatomic,strong) BPBLaunchScrollView* launchScrollView;
+
 @end
 
 @implementation ViewController
@@ -18,6 +20,20 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    // add a BPBLaunchScrollView
+    self.launchScrollView = [[BPBLaunchScrollView alloc]initWithFrame:self.view.frame];
+    // set default image
+    self.launchScrollView.defaultIconImage = [UIImage imageNamed:@"gravatar"];
+    // set max icon number in a row
+    self.launchScrollView.numberOfColumns = 3;
+    
+    // set datasource and delegate must be put in the end
+    self.launchScrollView.launchDataSource = self;
+    self.launchScrollView.launchDelegate = self;
+    
+    [self.view addSubview:self.launchScrollView];
+    
 }
 
 - (void)viewDidUnload
@@ -29,6 +45,37 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+}
+
+#pragma mark BPBLaunchScrollViewDataSource
+// 有多少元素要显示
+-(NSInteger)numberOfUserInfoInBPBLaunchController:(BPBLaunchScrollView*)launchController
+{
+    return 100;
+}
+
+
+// 要显示的图标url
+-(NSString*)imageUrlAtIndex:(NSInteger)index
+{
+    return @"http://a1.mzstatic.com/us/r1000/116/Purple/v4/87/60/7c/87607c4c-b38f-0b4e-ecc3-f3655b9855b9/mzl.szkfctue.175x175-75.jpg";
+}
+// 要显示的名称
+-(NSString*)titleAtIndex:(NSInteger)index
+{
+    return [NSString stringWithFormat:@"title:%d",index];
+}
+
+#pragma mark BPBLaunchScrollViewDelegate
+// 列表开始滚动
+-(void)BPBLaunchControllerWillBeginDragging:(BPBLaunchScrollView *)launchController
+{
+    NSLog(@"BPBLaunchControllerWillBeginDragging");
+}
+// 点击图标
+-(void)BPBLaunchController:(BPBLaunchScrollView*)launchController didClicked:(NSInteger)index
+{
+    [[[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"button %d clicked",index] delegate:nil cancelButtonTitle:@"Confirm" otherButtonTitles:nil, nil] show];
 }
 
 @end

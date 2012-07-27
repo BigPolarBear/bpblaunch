@@ -1,8 +1,8 @@
 //
 //  BPBLaunchControllerViewController.h
-//  lovesearch
+//  bpblaunch
 //
-//  Created by 韩 鑫 on 7/9/12.
+//  Created by BigPolarBear on 7/9/12.
 //
 //
 
