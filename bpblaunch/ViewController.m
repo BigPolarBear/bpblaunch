@@ -29,8 +29,8 @@
     self.launchScrollView.numberOfColumns = 3;
     
     // set datasource and delegate must be put in the end
-    self.launchScrollView.launchDataSource = self;
-    self.launchScrollView.launchDelegate = self;
+    self.launchScrollView.dataSource = self;
+    self.launchScrollView.delegate = self;
     
     [self.view addSubview:self.launchScrollView];
     

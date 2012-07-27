@@ -11,21 +11,19 @@
 @class BPBLaunchScrollView;
 
 
-@protocol BPBLaunchScrollViewDataSource <NSObject,UIScrollViewDelegate>
+@protocol BPBLaunchScrollViewDataSource <NSObject>
 
-// 有多少元素要显示
+// 有多少元素要显示    How many items need
 -(NSInteger)numberOfUserInfoInBPBLaunchController:(BPBLaunchScrollView*)launchController;
-// 要显示的图标url
+// 要显示的图标url    The image url at index
 -(NSString*)imageUrlAtIndex:(NSInteger)index;
-// 要显示的名称
+// 要显示的名称       The title at index
 -(NSString*)titleAtIndex:(NSInteger)index;
 
 @end
 
-@protocol BPBLaunchScrollViewDelegate <NSObject>
+@protocol BPBLaunchScrollViewDelegate <NSObject,UIScrollViewDelegate>
 
-// 列表开始滚动
--(void)BPBLaunchControllerWillBeginDragging:(BPBLaunchScrollView *)launchController;
 // 点击图标
 -(void)BPBLaunchController:(BPBLaunchScrollView*)launchController didClicked:(NSInteger)index;
 
@@ -33,10 +31,10 @@
 
 
 
-@interface BPBLaunchScrollView : UIScrollView<UIScrollViewDelegate>
+@interface BPBLaunchScrollView : UIScrollView
 
-@property (weak,nonatomic) id<BPBLaunchScrollViewDelegate>    launchDelegate;
-@property (weak,nonatomic) id<BPBLaunchScrollViewDataSource>  launchDataSource;
+@property (weak,nonatomic) id<BPBLaunchScrollViewDelegate>    delegate;
+@property (weak,nonatomic) id<BPBLaunchScrollViewDataSource>  dataSource;
 
 @property (assign,nonatomic) NSInteger numberOfColumns;
 @property (strong,nonatomic) UIImage* defaultIconImage;

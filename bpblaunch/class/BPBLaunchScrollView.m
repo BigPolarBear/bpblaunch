@@ -42,16 +42,16 @@
 @implementation BPBLaunchScrollView
 
 @synthesize scrollView;
-@synthesize launchDelegate,launchDataSource;
+@synthesize delegate,dataSource;
 @synthesize defaultIconImage;
--(void)setLaunchDelegate:(id<BPBLaunchScrollViewDelegate>)ld
+//-(void)setLaunchDelegate:(id<BPBLaunchScrollViewDelegate>)ld
+//{
+//    launchDelegate = ld;
+//    self.delegate = ld;
+//}
+-(void)setDataSource:(id<BPBLaunchScrollViewDataSource>)ds
 {
-    launchDelegate = ld;
-    self.delegate = ld;
-}
--(void)setLaunchDataSource:(id<BPBLaunchScrollViewDataSource>)ds
-{
-    launchDataSource = ds;
+    dataSource = ds;
     [self reloadData];
 }
 
@@ -92,9 +92,9 @@
 
 -(void)iconClicked:(UIView*)sender
 {
-    if(launchDelegate)
+    if(delegate)
     {
-        [launchDelegate BPBLaunchController:self didClicked:sender.tag];
+        [delegate BPBLaunchController:self didClicked:sender.tag];
     }
 }
 
@@ -109,7 +109,7 @@
     CGFloat space = (self.frame.size.width - _left - _right - self.numberOfColumns * total_width)/(self.numberOfColumns - 1);
     
     // 总数
-    int numberOfUserInfo = [self.launchDataSource numberOfUserInfoInBPBLaunchController:self];
+    int numberOfUserInfo = [self.dataSource numberOfUserInfoInBPBLaunchController:self];
     // 有多少行
     int numberOfRows = numberOfUserInfo / self.numberOfColumns;
     if(numberOfUserInfo % self.numberOfColumns == 0)
@@ -149,7 +149,7 @@
         [buttonIcon addTarget:self action:@selector(iconClicked:) forControlEvents:UIControlEventTouchUpInside];
         
         // 设置图标图片
-        NSString* imgUrl = [self.launchDataSource imageUrlAtIndex:iCnt];
+        NSString* imgUrl = [self.dataSource imageUrlAtIndex:iCnt];
         if(self.defaultIconImage)
         {
             [buttonIcon setImage:self.defaultIconImage forState:UIControlStateNormal];
@@ -193,7 +193,7 @@
         labelTitle.shadowColor = [UIColor darkGrayColor];
         labelTitle.shadowOffset = CGSizeMake(0, 1);
         labelTitle.backgroundColor = [UIColor clearColor];
-        NSString* title = [self.launchDataSource titleAtIndex:iCnt];
+        NSString* title = [self.dataSource titleAtIndex:iCnt];
         labelTitle.text = title;
         
         [labelBackground addSubview:labelTitle];
