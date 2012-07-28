@@ -77,7 +77,6 @@
 
 -(void)reloadData
 {
-    
     // 移除所有的subview
     for(UIView *subview in [self subviews]) {
         [subview removeFromSuperview];
@@ -85,6 +84,7 @@
     
     // 中心点间距
     CGFloat spaceCenter = (self.frame.size.width - self.contentInset.left - self.contentInset.right - total_width)/(self.numberOfColumns - 1);
+
     // 图标间距
     CGFloat spaceBorder = spaceCenter - total_width;
     
@@ -102,10 +102,10 @@
         numberOfRows = numberOfUserInfo / self.numberOfColumns;
     }
 
-    float heightOfContent = self.contentInset.top + self.contentInset.bottom + total_height * numberOfRows + (numberOfRows-1) * spaceBorder;
+    float heightOfContent = total_height * numberOfRows + (numberOfRows-1) * spaceBorder;
     float widthOfContent = self.frame.size.width;
-    self.contentSize = CGSizeMake(widthOfContent, heightOfContent);
-    self.contentOffset = CGPointZero;
+    self.contentSize = CGSizeMake(widthOfContent - self.contentInset.left - self.contentInset.right, heightOfContent);
+    self.bounces = NO;
     self.alwaysBounceHorizontal = NO;
     
     NSLog(@"spaceCenter:%f",spaceCenter);
@@ -128,8 +128,8 @@
         labelBackground.userInteractionEnabled = YES;
         
         // 计算位置
-        CGFloat centerX = self.contentInset.left + total_width / 2 + spaceCenter*iCol;
-        CGFloat centerY = self.contentInset.top + total_height / 2 + (total_height + spaceBorder)*iRow;
+        CGFloat centerX = total_width / 2 + spaceCenter*iCol;
+        CGFloat centerY = total_height / 2 + (total_height + spaceBorder)*iRow;
         labelBackground.center = CGPointMake(centerX, centerY);
         NSLog(@"iCnt:%d (%f,%f)",iCnt,centerX,centerY);
         
