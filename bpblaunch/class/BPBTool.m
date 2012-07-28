@@ -21,20 +21,23 @@
     UIImage* imageCached = nil;
     if (usingCache && [fileManager fileExistsAtPath:filePath])
     {
-        // using cached image
+        // 使用缓存的图片  using cached image
         imageCached = [UIImage imageWithContentsOfFile:filePath];
     }
         
     if(imageCached)
     {
-//        dispatch_sync(dispatch_get_main_queue(), ^(){
-            completionHander(YES,imageCached,nil);
-//            return;
-//        });
+        // 缓存图片可用   cached image loaded successfully
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(){
+            dispatch_sync(dispatch_get_main_queue(), ^(){
+                completionHander(YES,imageCached,nil);
+                return;
+            });
+        });
     }
     else
     {
-        // asyn load image by url
+        // 异步加载图片 asyn load image by url
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(){
 
             NSError* error = nil;            
@@ -42,6 +45,7 @@
             
             if (error != nil)
             {
+                // 加载图片失败   load image by url failed
                 NSLog(@"download image file failed: %@", [error localizedDescription]);
                 dispatch_sync(dispatch_get_main_queue(), ^(){
                         completionHander(NO,nil,error);                  
@@ -50,7 +54,7 @@
             {
                 if ([data writeToFile:filePath options:NSDataWritingAtomic error:&error])
                 {
-                    NSLog(@"write cahce file success");
+//                    NSLog(@"write cahce file success");
                 }
                 else
                 {
@@ -65,7 +69,7 @@
                     }
                     else
                     {
-                        completionHander(NO,nil,nil);   // todo 
+                        completionHander(NO,nil,nil);
                     }
                 });
             }            

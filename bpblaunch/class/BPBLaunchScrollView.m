@@ -19,36 +19,18 @@
 #define total_width     icon_width
 #define total_height    (icon_height + title_height + between_title_icon)
 
-
-#define default_top     12.0
-#define default_bottom  12.0
-#define default_left    16.0
-#define default_right   16.0
-
 #define default_numberOfColumns 4
 
 @interface BPBLaunchScrollView ()
 {
-    float   _top;
-    float   _bottom;
-    float   _right;
-    float   _left;
 }
-
-@property (strong,nonatomic) UIScrollView* scrollView;
 
 @end
 
 @implementation BPBLaunchScrollView
 
-@synthesize scrollView;
-@synthesize delegate,dataSource;
+@synthesize dataSource;
 @synthesize defaultIconImage;
-//-(void)setLaunchDelegate:(id<BPBLaunchScrollViewDelegate>)ld
-//{
-//    launchDelegate = ld;
-//    self.delegate = ld;
-//}
 -(void)setDataSource:(id<BPBLaunchScrollViewDataSource>)ds
 {
     dataSource = ds;
@@ -61,20 +43,9 @@
     numberOfColumns = aNumberOfColumns;
 }
 
--(void)initDefaultValues
-{
-    _top = default_top;
-    _bottom = default_bottom;
-    _left = default_left;
-    _right = default_right;
-    self.numberOfColumns = default_numberOfColumns;
-}
-
 -(id)init
 {
     self = [super init];
-
-    [self initDefaultValues];
     
     [self setPagingEnabled:NO];   // 不分页
     [self setShowsVerticalScrollIndicator:NO];//不显示垂直滚动条
@@ -84,43 +55,64 @@
     [self setMaximumZoomScale:1];
     [self setMinimumZoomScale:1];
     
-    self.alwaysBounceHorizontal = NO;
     self.userInteractionEnabled = YES;
+    
+    self.bounces = NO;
+    self.directionalLockEnabled = YES;
+
+    self.alwaysBounceHorizontal = NO;
+    self.alwaysBounceVertical = NO;
     
     return self;
 }
 
 -(void)iconClicked:(UIView*)sender
 {
-    if(delegate)
+    if(self.delegate && [self.delegate conformsToProtocol:@protocol(BPBLaunchScrollViewDelegate)])
     {
-        [delegate BPBLaunchController:self didClicked:sender.tag];
+        id<BPBLaunchScrollViewDelegate> bpbLaunchDelegate = (id<BPBLaunchScrollViewDelegate>)self.delegate;
+        [bpbLaunchDelegate BPBLaunchController:self didClicked:sender.tag];
     }
 }
 
 -(void)reloadData
 {
+    
     // 移除所有的subview
     for(UIView *subview in [self subviews]) {
         [subview removeFromSuperview];
     }
     
-    // 间距
-    CGFloat space = (self.frame.size.width - _left - _right - self.numberOfColumns * total_width)/(self.numberOfColumns - 1);
+    // 中心点间距
+    CGFloat spaceCenter = (self.frame.size.width - self.contentInset.left - self.contentInset.right - total_width)/(self.numberOfColumns - 1);
+    // 图标间距
+    CGFloat spaceBorder = spaceCenter - total_width;
+    
     
     // 总数
     int numberOfUserInfo = [self.dataSource numberOfUserInfoInBPBLaunchController:self];
     // 有多少行
-    int numberOfRows = numberOfUserInfo / self.numberOfColumns;
-    if(numberOfUserInfo % self.numberOfColumns == 0)
+    int numberOfRows;
+    if(numberOfUserInfo == 0)
     {
-        numberOfRows++;
+        numberOfRows = 0;
     }
-     
-    float heightOfContent = _top + _bottom + numberOfRows*(total_height + space) + total_height;
+    else
+    {
+        numberOfRows = numberOfUserInfo / self.numberOfColumns;
+    }
+
+    float heightOfContent = self.contentInset.top + self.contentInset.bottom + total_height * numberOfRows + (numberOfRows-1) * spaceBorder;
     float widthOfContent = self.frame.size.width;
     self.contentSize = CGSizeMake(widthOfContent, heightOfContent);
+    self.contentOffset = CGPointZero;
+    self.alwaysBounceHorizontal = NO;
     
+    NSLog(@"spaceCenter:%f",spaceCenter);
+    NSLog(@"spaceBorder:%f",spaceBorder);
+    NSLog(@"contentSize:(%f,%f)",self.contentSize.width,self.contentSize.height);
+    NSLog(@"contentOffset:(%f,%f)",self.contentOffset.x,self.contentOffset.y);
+
     
     for (int iCnt = 0; iCnt<numberOfUserInfo; iCnt++)
     {
@@ -136,13 +128,14 @@
         labelBackground.userInteractionEnabled = YES;
         
         // 计算位置
-        CGFloat centerX = _left + (total_width + space)*iCol + total_width/2;
-        CGFloat centerY = _top + (total_height + space)*iRow + total_height/2;
+        CGFloat centerX = self.contentInset.left + total_width / 2 + spaceCenter*iCol;
+        CGFloat centerY = self.contentInset.top + total_height / 2 + (total_height + spaceBorder)*iRow;
         labelBackground.center = CGPointMake(centerX, centerY);
         NSLog(@"iCnt:%d (%f,%f)",iCnt,centerX,centerY);
         
         // 增加图标按钮
         UIButton* buttonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
+        [labelBackground addSubview:buttonIcon];
         // tag记录下序号
         buttonIcon.tag = iCnt;
         // 增加点击事件
@@ -182,7 +175,6 @@
                }];
            }
         }];
-        [labelBackground addSubview:buttonIcon];
         
         // 增加文字
         UILabel* labelTitle = [[UILabel alloc]initWithFrame:CGRectMake(0, icon_height + between_title_icon, title_width, title_height)];
@@ -199,15 +191,11 @@
         [labelBackground addSubview:labelTitle];
         [self addSubview:labelBackground];
     }
+    
+    
+
 }
 
--(void)setBorderTop:(float)top bottom:(float)bottom left:(float)left right:(float)right;
-{
-    _top = top;
-    _bottom = bottom;
-    _left = left;
-    _right = right;    
-}
 
 
 @end

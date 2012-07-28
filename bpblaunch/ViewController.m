@@ -25,15 +25,16 @@
     self.launchScrollView = [[BPBLaunchScrollView alloc]initWithFrame:self.view.frame];
     // set default image
     self.launchScrollView.defaultIconImage = [UIImage imageNamed:@"gravatar"];
+    self.launchScrollView.contentInset = UIEdgeInsetsMake(12, 12, 16, 16);
+    
     // set max icon number in a row
-    self.launchScrollView.numberOfColumns = 3;
+    self.launchScrollView.numberOfColumns = 4;
     
     // set datasource and delegate must be put in the end
     self.launchScrollView.dataSource = self;
     self.launchScrollView.delegate = self;
     
     [self.view addSubview:self.launchScrollView];
-    
 }
 
 - (void)viewDidUnload
@@ -76,6 +77,12 @@
 -(void)BPBLaunchController:(BPBLaunchScrollView*)launchController didClicked:(NSInteger)index
 {
     [[[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"button %d clicked",index] delegate:nil cancelButtonTitle:@"Confirm" otherButtonTitles:nil, nil] show];
+}
+
+#pragma mark UIScrollViewDelegate
+- (void)scrollViewDidScroll:(UIScrollView *)sv
+{
+    NSLog(@"scrollViewDidScroll:(%f,%f)",sv.contentOffset.x,sv.contentOffset.y);
 }
 
 @end

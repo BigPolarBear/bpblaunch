@@ -24,23 +24,20 @@
 
 @protocol BPBLaunchScrollViewDelegate <NSObject,UIScrollViewDelegate>
 
-// 点击图标
+// 点击图标     iCon Clicked
 -(void)BPBLaunchController:(BPBLaunchScrollView*)launchController didClicked:(NSInteger)index;
 
 @end
 
 
-
 @interface BPBLaunchScrollView : UIScrollView
 
-@property (weak,nonatomic) id<BPBLaunchScrollViewDelegate>    delegate;
 @property (weak,nonatomic) id<BPBLaunchScrollViewDataSource>  dataSource;
 
 @property (assign,nonatomic) NSInteger numberOfColumns;
 @property (strong,nonatomic) UIImage* defaultIconImage;
 
--(void)setBorderTop:(float)top bottom:(float)bottom left:(float)left right:(float)right;
-// 重新加载数据
+// 重新加载数据 reloadData
 -(void)reloadData;
 
 

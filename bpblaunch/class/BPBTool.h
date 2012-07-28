@@ -10,7 +10,7 @@
 
 @interface BPBTool : NSObject
 
-/** loading remote image url */
+/** 异步加载url地址对应的图片  loading remote image url */
 +(void)loadRemoteImage:(NSString*)urlStr
             usingCache:(BOOL)usingCache
             completion:(void(^)(BOOL success,UIImage* image,NSError* error))completionHander;
