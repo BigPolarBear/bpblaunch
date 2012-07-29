@@ -24,13 +24,16 @@
 @interface BPBLaunchScrollView ()
 {
 }
+@property (nonatomic,retain) NSMutableArray* innerSubviews;
 
 @end
 
 @implementation BPBLaunchScrollView
 
-@synthesize dataSource;
+@synthesize innerSubviews;
 @synthesize defaultIconImage;
+@synthesize dataSource;
+
 -(void)setDataSource:(id<BPBLaunchScrollViewDataSource>)ds
 {
     dataSource = ds;
@@ -47,10 +50,10 @@
 {
     self = [super init];
     
-    [self setPagingEnabled:NO];   // 不分页
-    [self setShowsVerticalScrollIndicator:NO];//不显示垂直滚动条
-    [self setShowsHorizontalScrollIndicator:NO];//不显示水平滚动条
-    [self setBackgroundColor:[UIColor clearColor]];   //设置背景为透明
+    [self setPagingEnabled:NO];
+    [self setShowsVerticalScrollIndicator:NO];
+    [self setShowsHorizontalScrollIndicator:NO];
+    [self setBackgroundColor:[UIColor clearColor]];
     
     [self setMaximumZoomScale:1];
     [self setMinimumZoomScale:1];
@@ -58,8 +61,6 @@
     self.userInteractionEnabled = YES;
     
     self.bounces = NO;
-    self.directionalLockEnabled = YES;
-
     self.alwaysBounceHorizontal = NO;
     self.alwaysBounceVertical = NO;
     
@@ -75,31 +76,60 @@
     }
 }
 
--(void)reloadData
+-(UIButton*)createButtonWithTag:(NSInteger)tag
 {
-    // 移除所有的subview
-    for(UIView *subview in [self subviews]) {
-        [subview removeFromSuperview];
+    UIButton* buttonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
+    buttonIcon.tag = tag;
+    [buttonIcon addTarget:self action:@selector(iconClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    return buttonIcon;
+}
+
+-(void)addSubview:(UIView *)view
+{
+    if(!self.innerSubviews)
+    {
+        self.innerSubviews = [[NSMutableArray alloc]init];
     }
     
-    // 中心点间距
+    [self.innerSubviews addObject:view];
+    
+    [super addSubview:view];
+}
+-(void)removeAllInnerSubviews
+{
+    for (UIView* innerSubview in self.innerSubviews) {
+        [innerSubview removeFromSuperview];
+    }
+}
+
+-(void)reloadData
+{
+    // 移除所有的subview     remove all subviews
+    [self removeAllInnerSubviews];
+    
+    // 中心点间距    space between icon center point
     CGFloat spaceCenter = (self.frame.size.width - self.contentInset.left - self.contentInset.right - total_width)/(self.numberOfColumns - 1);
 
-    // 图标间距
+    // 图标间距     space between icon
     CGFloat spaceBorder = spaceCenter - total_width;
     
     
-    // 总数
+    // 总数       get number of items
     int numberOfUserInfo = [self.dataSource numberOfUserInfoInBPBLaunchController:self];
-    // 有多少行
+    // 有多少行    number of rows
     int numberOfRows;
     if(numberOfUserInfo == 0)
     {
         numberOfRows = 0;
     }
-    else
+    else if(numberOfUserInfo % self.numberOfColumns == 0)
     {
         numberOfRows = numberOfUserInfo / self.numberOfColumns;
+    }
+    else
+    {
+        numberOfRows = numberOfUserInfo / self.numberOfColumns + 1;
     }
 
     float heightOfContent = total_height * numberOfRows + (numberOfRows-1) * spaceBorder;
@@ -119,7 +149,7 @@
         int iRow = iCnt / numberOfColumns;
         int iCol = iCnt % numberOfColumns;
         
-        // 承载的背景标签
+        // 承载的背景标签 label that will contain icon and title
         UILabel* labelBackground = [[UILabel alloc]init];
         CGRect frame = labelBackground.frame;
         frame.size = CGSizeMake(total_width, total_height);
@@ -127,21 +157,17 @@
         labelBackground.backgroundColor = [UIColor clearColor];
         labelBackground.userInteractionEnabled = YES;
         
-        // 计算位置
+        // 计算位置 caculate center point
         CGFloat centerX = total_width / 2 + spaceCenter*iCol;
         CGFloat centerY = total_height / 2 + (total_height + spaceBorder)*iRow;
         labelBackground.center = CGPointMake(centerX, centerY);
         NSLog(@"iCnt:%d (%f,%f)",iCnt,centerX,centerY);
         
-        // 增加图标按钮
-        UIButton* buttonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
+        // 增加图标按钮 add icon
+        UIButton* buttonIcon = [self createButtonWithTag:iCnt];
         [labelBackground addSubview:buttonIcon];
-        // tag记录下序号
-        buttonIcon.tag = iCnt;
-        // 增加点击事件
-        [buttonIcon addTarget:self action:@selector(iconClicked:) forControlEvents:UIControlEventTouchUpInside];
-        
-        // 设置图标图片
+
+        // 设置图标图片 set icon image by url
         NSString* imgUrl = [self.dataSource imageUrlAtIndex:iCnt];
         if(self.defaultIconImage)
         {
@@ -150,16 +176,14 @@
         [BPBTool loadRemoteImage:imgUrl usingCache:YES completion:^(BOOL success, UIImage *image, NSError *error) {
            if(success)
            {
-               // 增加图标按钮
-               UIButton* newButtonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
-               // tag记录下序号
-               newButtonIcon.tag = iCnt;
-               // 增加点击事件
-               [newButtonIcon addTarget:self action:@selector(iconClicked:) forControlEvents:UIControlEventTouchUpInside];
+               // 替换图标图片    use new button with loaded image
+               UIButton* newButtonIcon = [self createButtonWithTag:iCnt];
+               
                newButtonIcon.alpha = 0;
                [newButtonIcon setImage:image forState:UIControlStateNormal];
                [labelBackground addSubview:newButtonIcon];
                
+               // 老的按钮淡出，新按钮淡入  old button fade out while new button fade in
                [UIView animateWithDuration:1 animations:^{
                    newButtonIcon.alpha = 1;
                    buttonIcon.alpha = 0;
@@ -176,7 +200,7 @@
            }
         }];
         
-        // 增加文字
+        // 增加文字     add title
         UILabel* labelTitle = [[UILabel alloc]initWithFrame:CGRectMake(0, icon_height + between_title_icon, title_width, title_height)];
         // todo 可由外部设置
         labelTitle.font = title_font;
@@ -191,9 +215,6 @@
         [labelBackground addSubview:labelTitle];
         [self addSubview:labelBackground];
     }
-    
-    
-
 }
 
 
