@@ -177,13 +177,27 @@
         [labelBackground addSubview:buttonIcon];
 
         // 设置图标图片 set icon image by url
+        BOOL imgAlreadySet = NO;
         NSString* imgUrl = [self.dataSource imageUrlAtIndex:iCnt];
-        UIImage* cachedImg = [BPBTool loadCacheImage:imgUrl];
-        if(cachedImg)
+        // 如果bundle里有这个图片则直接加载  if bundle has same image file then use it
+        UIImage* bundleImg = [UIImage imageNamed:imgUrl];
+        if(bundleImg)
         {
-            [buttonIcon setImage:cachedImg forState:UIControlStateNormal];
+            [buttonIcon setImage:bundleImg forState:UIControlStateNormal];
+            imgAlreadySet = YES;
         }
-        else
+ 
+        if(!imgAlreadySet)
+        {
+            UIImage* cachedImg = [BPBTool loadCacheImage:imgUrl];
+            if(cachedImg)
+            {
+                [buttonIcon setImage:cachedImg forState:UIControlStateNormal];
+                imgAlreadySet = YES;
+            }
+        }
+        
+        if(!imgAlreadySet)
         {
             if(self.defaultIconImage)
             {
