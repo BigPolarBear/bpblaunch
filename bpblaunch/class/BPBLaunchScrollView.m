@@ -25,6 +25,7 @@
 {
 }
 @property (nonatomic,retain) NSMutableArray* innerSubviews;
+-(void)buttonIconLongPressed:(id)sender;
 
 @end
 
@@ -64,10 +65,11 @@
     self.alwaysBounceHorizontal = NO;
     self.alwaysBounceVertical = NO;
     
+    
     return self;
 }
 
--(void)iconClicked:(UIView*)sender
+-(void)buttonIconClicked:(UIView*)sender
 {
     if(self.delegate && [self.delegate conformsToProtocol:@protocol(BPBLaunchScrollViewDelegate)])
     {
@@ -75,12 +77,19 @@
         [bpbLaunchDelegate BPBLaunchController:self didClicked:sender.tag];
     }
 }
+-(void)buttonIconLongPressed:(id)sender
+{
+    NSLog(@"longPressed:%@:%f",[[UIButton class] description],&sender);
+}
 
 -(UIButton*)createButtonWithTag:(NSInteger)tag
 {
     UIButton* buttonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
     buttonIcon.tag = tag;
-    [buttonIcon addTarget:self action:@selector(iconClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [buttonIcon addTarget:self action:@selector(buttonIconClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(buttonIconLongPressed:)];
+    [buttonIcon addGestureRecognizer:longPress];
     
     return buttonIcon;
 }
@@ -169,40 +178,50 @@
 
         // 设置图标图片 set icon image by url
         NSString* imgUrl = [self.dataSource imageUrlAtIndex:iCnt];
-        if(self.defaultIconImage)
+        UIImage* cachedImg = [BPBTool loadCacheImage:imgUrl];
+        if(cachedImg)
         {
-            [buttonIcon setImage:self.defaultIconImage forState:UIControlStateNormal];
+            [buttonIcon setImage:cachedImg forState:UIControlStateNormal];
         }
-        [BPBTool loadRemoteImage:imgUrl usingCache:YES completion:^(BOOL success, UIImage *image, NSError *error) {
-           if(success)
-           {
-               // 替换图标图片    use new button with loaded image
-               UIButton* newButtonIcon = [self createButtonWithTag:iCnt];
-               
-               newButtonIcon.alpha = 0;
-               [newButtonIcon setImage:image forState:UIControlStateNormal];
-               [labelBackground addSubview:newButtonIcon];
-               
-               // 老的按钮淡出，新按钮淡入  old button fade out while new button fade in
-               [UIView animateWithDuration:1 animations:^{
-                   newButtonIcon.alpha = 1;
-                   buttonIcon.alpha = 0;
-               } completion:^(BOOL finished) {
-                   if(buttonIcon.superview)
-                   {
-                       [buttonIcon removeFromSuperview];
-                   }
-                   else
-                   {
-                       NSLog(@"buttonIcon.superview is nil");
-                   }
-               }];
-           }
-        }];
-        
+        else
+        {
+            if(self.defaultIconImage)
+            {
+                [buttonIcon setImage:self.defaultIconImage forState:UIControlStateNormal];
+            }
+            
+            [BPBTool loadRemoteImage:imgUrl usingCache:YES completion:^(BOOL success, UIImage *image, NSError *error) {
+                if(success)
+                {
+                    // 替换图标图片    use new button with loaded image
+                    UIButton* newButtonIcon = [self createButtonWithTag:iCnt];
+                    
+                    newButtonIcon.alpha = 0;
+                    [newButtonIcon setImage:image forState:UIControlStateNormal];
+                    [labelBackground addSubview:newButtonIcon];
+                    
+                    // 老的按钮淡出，新按钮淡入  old button fade out while new button fade in
+                    [UIView animateWithDuration:1 animations:^{
+                        newButtonIcon.alpha = 1;
+                        buttonIcon.alpha = 0;
+                    } completion:^(BOOL finished) {
+                        if(buttonIcon.superview)
+                        {
+                            [buttonIcon removeFromSuperview];
+                        }
+                        else
+                        {
+                            NSLog(@"buttonIcon.superview is nil");
+                        }
+                    }];
+                }
+            }];
+
+        }
+             
         // 增加文字     add title
         UILabel* labelTitle = [[UILabel alloc]initWithFrame:CGRectMake(0, icon_height + between_title_icon, title_width, title_height)];
-        // todo 可由外部设置
+        // todo 可由外部设置  these can be set outside
         labelTitle.font = title_font;
         labelTitle.textAlignment = UITextAlignmentCenter;
         labelTitle.textColor = [UIColor whiteColor];
@@ -217,6 +236,15 @@
     }
 }
 
+#pragma mark 触控
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+}
 
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesEnded:touches withEvent:event];
+}
 
 @end

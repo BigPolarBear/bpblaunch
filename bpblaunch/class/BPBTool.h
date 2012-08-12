@@ -10,6 +10,9 @@
 
 @interface BPBTool : NSObject
 
+/** 加载缓存的url地址对应的图片  loading cached image url */
++(UIImage*)loadCacheImage:(NSString*)urlStr;
+
 /** 异步加载url地址对应的图片  loading remote image url */
 +(void)loadRemoteImage:(NSString*)urlStr
             usingCache:(BOOL)usingCache

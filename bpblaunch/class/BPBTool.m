@@ -10,6 +10,26 @@
 
 @implementation BPBTool
 
+
++(UIImage*)loadCacheImage:(NSString*)urlStr
+{
+    NSString* filePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSAllDomainsMask, YES) objectAtIndex:0];
+    filePath = [filePath stringByAppendingFormat:@"/%@",[urlStr lastPathComponent]];
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    
+    UIImage* imageCached = nil;
+    if ([fileManager fileExistsAtPath:filePath])
+    {
+        // 使用缓存的图片  using cached image
+        imageCached = [UIImage imageWithContentsOfFile:filePath];
+        return imageCached;
+    }
+    else
+    {
+        return nil;
+    }
+}
+
 +(void)loadRemoteImage:(NSString*)urlStr
             usingCache:(BOOL)usingCache
             completion:(void(^)(BOOL success,UIImage* image,NSError* error))completionHander
