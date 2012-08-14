@@ -31,9 +31,10 @@
 
 @implementation BPBLaunchScrollView
 
+@synthesize dataSource;
 @synthesize innerSubviews;
 @synthesize defaultIconImage;
-@synthesize dataSource;
+@synthesize imageUrlPrefixArray;
 
 -(void)setDataSource:(id<BPBLaunchScrollViewDataSource>)ds
 {
@@ -180,7 +181,7 @@
         BOOL imgAlreadySet = NO;
         NSString* imgUrl = [self.dataSource imageUrlAtIndex:iCnt];
         // 如果bundle里有这个图片则直接加载  if bundle has same image file then use it
-        UIImage* bundleImg = [UIImage imageNamed:imgUrl];
+        UIImage* bundleImg = [BPBTool loadBundleImageWhenImageUrl:imgUrl withPrefix:imageUrlPrefixArray];
         if(bundleImg)
         {
             [buttonIcon setImage:bundleImg forState:UIControlStateNormal];

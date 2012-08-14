@@ -10,6 +10,28 @@
 
 @implementation BPBTool
 
++(UIImage*)loadBundleImageWhenImageUrl:(NSString*)imageUrl withPrefix:(NSArray*)arrayPrefix
+{
+    for (NSString* pre in arrayPrefix) {
+        if([imageUrl rangeOfString:pre].location == 0)
+        {
+            NSString* imageName = [imageUrl stringByReplacingOccurrencesOfString:pre withString:@""];
+            NSArray* array = [imageName componentsSeparatedByString:@"."];
+            if(array.count != 2)
+            {
+                continue;
+            }
+            
+            if([[NSBundle mainBundle] pathForResource:[array objectAtIndex:0] ofType:[array objectAtIndex:1]])
+            {
+                // 图片已打包在bundle里
+                return [UIImage imageNamed:imageName];
+            }
+        }
+    }
+    
+    return nil;
+}
 
 +(UIImage*)loadCacheImage:(NSString*)urlStr
 {
