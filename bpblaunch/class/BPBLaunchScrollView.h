@@ -37,9 +37,15 @@
 
 @property (assign,nonatomic) NSInteger numberOfColumns;
 @property (strong,nonatomic) UIImage* defaultIconImage;
+
+
+
 // 图片地址含给定的前缀的，则尝试去除前缀，加载在bundle内同名文件
 // when imageUrl has given urlPrefix in array then should try load bundle image with the same name without prefix
 @property (strong,nonatomic) NSArray* imageUrlPrefixArray;
+
+// 设置图标的圆角 set icon‘s corner radius
+@property (assign,nonatomic) CGFloat iconCornerRadius;
 
 // 重新加载数据 reloadData
 -(void)reloadData;

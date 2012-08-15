@@ -8,6 +8,7 @@
 
 #import "BPBLaunchScrollView.h"
 #import "BPBTool.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define icon_width      57
 #define icon_height     57
@@ -35,6 +36,7 @@
 @synthesize innerSubviews;
 @synthesize defaultIconImage;
 @synthesize imageUrlPrefixArray;
+@synthesize iconCornerRadius;
 
 -(void)setDataSource:(id<BPBLaunchScrollViewDataSource>)ds
 {
@@ -88,6 +90,8 @@
     UIButton* buttonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
     buttonIcon.tag = tag;
     [buttonIcon addTarget:self action:@selector(buttonIconClicked:) forControlEvents:UIControlEventTouchUpInside];
+    buttonIcon.layer.cornerRadius = self.iconCornerRadius;
+    buttonIcon.clipsToBounds = YES;
     
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(buttonIconLongPressed:)];
     [buttonIcon addGestureRecognizer:longPress];
