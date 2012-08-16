@@ -50,6 +50,12 @@
 }
 
 #pragma mark BPBLaunchScrollViewDataSource
+
+-(BOOL)canDeleteItemInEditModeAtIndex:(NSInteger)index
+{
+    return index%2 == 0;
+}
+
 // 有多少元素要显示    How many items need
 -(NSInteger)numberOfUserInfoInBPBLaunchController:(BPBLaunchScrollView*)launchController
 {

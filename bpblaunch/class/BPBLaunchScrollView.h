@@ -21,8 +21,13 @@
 -(NSString*)titleAtIndex:(NSInteger)index;
 
 @optional
+// 允许在编辑模式下删除，不实现则默认为YES
+// the item at index allowed be deleted while in edit mode, if not implemented then default value is YES
+-(BOOL)canDeleteItemInEditModeAtIndex:(NSInteger)index;
 // 删除此位置的元素    Delete the item at index
 -(void)deleteItemAtIndex:(NSInteger)index;
+// 移动元素位置       move item
+//-(void)moveItemFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex;
 
 @end
 
@@ -31,9 +36,6 @@
 // 点击图标     icon Clicked
 -(void)BPBLaunchController:(BPBLaunchScrollView*)launchController didClicked:(NSInteger)index;
 
-@optional
-// 长按图标     icon Clicked
--(void)BPBLaunchController:(BPBLaunchScrollView*)launchController longPressed:(NSInteger)index;
 
 @end
 

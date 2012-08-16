@@ -23,7 +23,8 @@
 @property (nonatomic,retain) NSMutableArray* itemViews;
 @property (nonatomic,retain) NSMutableArray* buttonDeletes;
 
--(void)buttonIconLongPressed:(id)sender;
+-(void)handleLongPressGesture:(UIGestureRecognizer*)recognizer;
+
 
 
 
@@ -33,15 +34,16 @@
 
 @implementation BPBLaunchScrollView
 
-@synthesize dataSource;
 
+
+
+#pragma mark property
 @synthesize defaultIconImage;
-
 @synthesize allowEnableEditMode;
 @synthesize iconCornerRadius;
 @synthesize imageUrlPrefixArray;
 
-
+@synthesize dataSource;
 -(void)setDataSource:(id<BPBLaunchScrollViewDataSource>)ds
 {
     dataSource = ds;
@@ -63,15 +65,22 @@
     editMode = newEditMode;
     
     // 所有图标左上角的删除按钮显示 show the cancel top left cancel button of icon
-    for (UIButton* item in self.buttonDeletes) {
+    for (int iCnt = 0; iCnt < self.buttonDeletes.count; iCnt++) {
+        UIButton* button = [self.buttonDeletes objectAtIndex:iCnt];
+        BOOL canShowDeleteButton = YES;
+        if([self.dataSource respondsToSelector:@selector(canDeleteItemInEditModeAtIndex:)])
+        {
+            id<BPBLaunchScrollViewDataSource> ds = self.dataSource;
+            canShowDeleteButton = [ds canDeleteItemInEditModeAtIndex:iCnt];
+        }
         [UIView animateWithDuration:cancel_button_show_animation_duration animations:^{
-            if(editMode)
+            if(editMode && canShowDeleteButton)
             {
-                item.alpha = 1;
+                button.alpha = 1;
             }
             else
             {
-                item.alpha = 0;
+                button.alpha = 0;
             }
         }];
     }
@@ -96,6 +105,7 @@
     return buttonDeletes;
 }
 
+#pragma mark life cycle
 -(id)init
 {
     self = [super init];
@@ -117,6 +127,7 @@
     return self;
 }
 
+#pragma mark events
 -(void)buttonIconClicked:(UIView*)sender
 {
     if(self.editMode)
@@ -176,23 +187,56 @@
     
 
 }
--(void)buttonIconLongPressed:(UIButton*)sender
+
+#pragma mark gesture
+
+-(void)handleLongPressGesture:(UIGestureRecognizer*)recognizer
 {
     if(!self.editMode)
     {
         self.editMode = YES;
     }
     
-    if(self.delegate && [self.delegate respondsToSelector:@selector(BPBLaunchController:longPressed:)])
+    if(recognizer.state == UIGestureRecognizerStateBegan)
     {
-        id<BPBLaunchScrollViewDelegate> bpbLaunchDelegate = (id<BPBLaunchScrollViewDelegate>)self.delegate;
-        [bpbLaunchDelegate BPBLaunchController:self longPressed:sender.tag];
-        NSLog(@"longPressedIcon:%d",sender.tag);
+        //if needed do some initial setup or init of views here
     }
+    else if(recognizer.state == UIGestureRecognizerStateChanged)
+    {
+//        //move your views here.
+//        if([recognizer.view.superview isKindOfClass:[BPBLaunchItemView class]])
+//        {
+//            BPBLaunchItemView* currentItem = (BPBLaunchItemView*)recognizer.view.superview;
+//            UIButton* currentButtonDelete = (UIButton*)[self.buttonDeletes objectAtIndex:currentItem.tag];
+//            
+//            currentItem.center = [recognizer locationInView:self];
+//            currentButtonDelete.center = currentItem.frame.origin;
+//        }
+    }
+    else if(recognizer.state == UIGestureRecognizerStateEnded)
+    {
+        //else do cleanup
+    }    
 }
 
+#pragma mark private
+-(CGPoint)getCenterAtIndex:(NSInteger)index
+{
+    int iRow = index / numberOfColumns;
+    int iCol = index % numberOfColumns;
+    
+    // 中心点间距    space between icon center point
+    CGFloat spaceCenter = (self.frame.size.width - self.contentInset.left - self.contentInset.right - total_width)/(self.numberOfColumns - 1);
+    
+    // 图标间距     space between icon
+    CGFloat spaceBorder = spaceCenter - total_width;
+    CGFloat centerX = total_width / 2 + spaceCenter*iCol;
+    CGFloat centerY = total_height / 2 + (total_height + spaceBorder)*iRow;
+    
+    return CGPointMake(centerX, centerY);
+}
 
-
+#pragma mark public
 -(void)reloadData
 {
     // 移除所有的subview     remove all subviews
@@ -205,6 +249,8 @@
         [button removeFromSuperview];
     }
     [self.buttonDeletes removeAllObjects];
+    
+    
     
     // 中心点间距    space between icon center point
     CGFloat spaceCenter = (self.frame.size.width - self.contentInset.left - self.contentInset.right - total_width)/(self.numberOfColumns - 1);
@@ -243,10 +289,7 @@
 
     
     for (int iCnt = 0; iCnt<numberOfUserInfo; iCnt++)
-    {
-        int iRow = iCnt / numberOfColumns;
-        int iCol = iCnt % numberOfColumns;
-        
+    {   
         // create itemView
         CGRect frame = CGRectZero;
         frame.size = CGSizeMake(total_width, total_height);
@@ -254,10 +297,7 @@
         item.tag = iCnt;
 
         // 计算位置 caculate center point
-        CGFloat centerX = total_width / 2 + spaceCenter*iCol;
-        CGFloat centerY = total_height / 2 + (total_height + spaceBorder)*iRow;
-        item.center = CGPointMake(centerX, centerY);        
-        NSLog(@"iCnt:%d (%f,%f)",iCnt,centerX,centerY);
+        item.center = [self getCenterAtIndex:iCnt];
         
         // 设置删除按钮   set delete button
         // 添加删除按钮   add delete button
@@ -285,7 +325,8 @@
         [item.buttonIcon addTarget:self action:@selector(buttonIconClicked:) forControlEvents:UIControlEventTouchUpInside];
         item.buttonIcon.layer.cornerRadius = self.iconCornerRadius;
         
-        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(buttonIconLongPressed:)];
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
+        longPress.allowableMovement = YES;
         [item.buttonIcon addGestureRecognizer:longPress];
         
 
@@ -339,11 +380,8 @@
     }
 }
 
-#pragma mark 触控
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    [super touchesBegan:touches withEvent:event];
-}
+#pragma mark touch
+
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
