@@ -20,12 +20,20 @@
 // 要显示的名称       The title at index
 -(NSString*)titleAtIndex:(NSInteger)index;
 
+@optional
+// 删除此位置的元素    Delete the item at index
+-(void)deleteItemAtIndex:(NSInteger)index;
+
 @end
 
 @protocol BPBLaunchScrollViewDelegate <NSObject,UIScrollViewDelegate>
 
-// 点击图标     iCon Clicked
+// 点击图标     icon Clicked
 -(void)BPBLaunchController:(BPBLaunchScrollView*)launchController didClicked:(NSInteger)index;
+
+@optional
+// 长按图标     icon Clicked
+-(void)BPBLaunchController:(BPBLaunchScrollView*)launchController longPressed:(NSInteger)index;
 
 @end
 
@@ -38,17 +46,24 @@
 @property (assign,nonatomic) NSInteger numberOfColumns;
 @property (strong,nonatomic) UIImage* defaultIconImage;
 
+// 重新加载数据 reloadData
+-(void)reloadData;
 
+#pragma mark 可选的    optional
 
+// 编辑模式（默认为NO）     edit mode, default is NO
+@property (assign,nonatomic) BOOL editMode;
+// 允许进入编辑模式（默认为长按图标）    allow entering edit mode while long pressed icon
+@property (assign,nonatomic) BOOL allowEnableEditMode;
+
+// 设置图标的圆角 set icon‘s corner radius
+@property (assign,nonatomic) CGFloat iconCornerRadius;
 // 图片地址含给定的前缀的，则尝试去除前缀，加载在bundle内同名文件
 // when imageUrl has given urlPrefix in array then should try load bundle image with the same name without prefix
 @property (strong,nonatomic) NSArray* imageUrlPrefixArray;
 
-// 设置图标的圆角 set icon‘s corner radius
-@property (assign,nonatomic) CGFloat iconCornerRadius;
 
-// 重新加载数据 reloadData
--(void)reloadData;
+
 
 
 @end

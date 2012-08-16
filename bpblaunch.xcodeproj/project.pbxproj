@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D529A9AC15DBC2B700760E21 /* BPBLaunchItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = D529A9AB15DBC2B700760E21 /* BPBLaunchItemView.m */; };
 		D55303FC15C2702500AAFD0C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D55303FB15C2702500AAFD0C /* UIKit.framework */; };
 		D55303FE15C2702500AAFD0C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D55303FD15C2702500AAFD0C /* Foundation.framework */; };
 		D553040015C2702500AAFD0C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D55303FF15C2702500AAFD0C /* CoreGraphics.framework */; };
@@ -21,6 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D529A9AA15DBC2B700760E21 /* BPBLaunchItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPBLaunchItemView.h; path = class/BPBLaunchItemView.h; sourceTree = "<group>"; };
+		D529A9AB15DBC2B700760E21 /* BPBLaunchItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BPBLaunchItemView.m; path = class/BPBLaunchItemView.m; sourceTree = "<group>"; };
 		D55303F715C2702500AAFD0C /* bpblaunch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bpblaunch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D55303FB15C2702500AAFD0C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		D55303FD15C2702500AAFD0C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -111,6 +114,8 @@
 				D553042A15C273F800AAFD0C /* BPBTool.m */,
 				D553042315C2711200AAFD0C /* BPBLaunchScrollView.h */,
 				D553042215C2711200AAFD0C /* BPBLaunchScrollView.m */,
+				D529A9AA15DBC2B700760E21 /* BPBLaunchItemView.h */,
+				D529A9AB15DBC2B700760E21 /* BPBLaunchItemView.m */,
 			);
 			name = class;
 			sourceTree = "<group>";
@@ -204,6 +209,7 @@
 				D553040F15C2702500AAFD0C /* ViewController.m in Sources */,
 				D553042415C2711200AAFD0C /* BPBLaunchScrollView.m in Sources */,
 				D553042B15C273F800AAFD0C /* BPBTool.m in Sources */,
+				D529A9AC15DBC2B700760E21 /* BPBLaunchItemView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

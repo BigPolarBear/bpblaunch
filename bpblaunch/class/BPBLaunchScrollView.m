@@ -7,36 +7,39 @@
 //
 
 #import "BPBLaunchScrollView.h"
+#import "BPBLaunchItemView.h"
+
 #import "BPBTool.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define icon_width      57
-#define icon_height     57
-#define title_width     57
-#define title_height    17
-#define title_font      [UIFont boldSystemFontOfSize:12]
-#define between_title_icon  4
-
-#define total_width     icon_width
-#define total_height    (icon_height + title_height + between_title_icon)
 
 #define default_numberOfColumns 4
+
+
 
 @interface BPBLaunchScrollView ()
 {
 }
-@property (nonatomic,retain) NSMutableArray* innerSubviews;
+@property (nonatomic,retain) NSMutableArray* itemViews;
+
 -(void)buttonIconLongPressed:(id)sender;
+
+
+
+
 
 @end
 
 @implementation BPBLaunchScrollView
 
 @synthesize dataSource;
-@synthesize innerSubviews;
+
 @synthesize defaultIconImage;
-@synthesize imageUrlPrefixArray;
+
+@synthesize allowEnableEditMode;
 @synthesize iconCornerRadius;
+@synthesize imageUrlPrefixArray;
+
 
 -(void)setDataSource:(id<BPBLaunchScrollViewDataSource>)ds
 {
@@ -48,6 +51,40 @@
 -(void)setNumberOfColumns:(NSInteger)aNumberOfColumns
 {
     numberOfColumns = aNumberOfColumns;
+}
+@synthesize editMode;
+-(void)setEditMode:(BOOL)newEditMode
+{
+    if(editMode == newEditMode)
+    {
+        return;
+    }
+    editMode = newEditMode;
+    
+    // 所有图标左上角的删除按钮显示 show the cancel top left cancel button of icon
+    for (BPBLaunchItemView* item in self.itemViews) {
+        [UIView animateWithDuration:cancel_button_show_animation_duration animations:^{
+            if(editMode)
+            {
+                item.buttonDelete.alpha = 1;
+            }
+            else
+            {
+                item.buttonDelete.alpha = 0;
+            }
+        }];
+    }
+ }
+
+@synthesize itemViews;
+-(NSMutableArray*)itemViews
+{
+    if(!itemViews)
+    {
+        itemViews = [[NSMutableArray alloc]init];
+    }
+    
+    return itemViews;
 }
 
 -(id)init
@@ -68,59 +105,80 @@
     self.alwaysBounceHorizontal = NO;
     self.alwaysBounceVertical = NO;
     
-    
     return self;
 }
 
 -(void)buttonIconClicked:(UIView*)sender
 {
+    if(self.editMode)
+    {
+        // 编辑模式下，点击图标事件无效   in edit mode，ignore icon click event
+        return;
+    }
+    
     if(self.delegate && [self.delegate conformsToProtocol:@protocol(BPBLaunchScrollViewDelegate)])
     {
         id<BPBLaunchScrollViewDelegate> bpbLaunchDelegate = (id<BPBLaunchScrollViewDelegate>)self.delegate;
         [bpbLaunchDelegate BPBLaunchController:self didClicked:sender.tag];
     }
 }
--(void)buttonIconLongPressed:(id)sender
+-(void)buttonDeleteClicked:(UIButton*)sender
 {
-    NSLog(@"longPressed:%@:%f",[[UIButton class] description],&sender);
-}
-
--(UIButton*)createButtonWithTag:(NSInteger)tag
-{
-    UIButton* buttonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
-    buttonIcon.tag = tag;
-    [buttonIcon addTarget:self action:@selector(buttonIconClicked:) forControlEvents:UIControlEventTouchUpInside];
-    buttonIcon.layer.cornerRadius = self.iconCornerRadius;
-    buttonIcon.clipsToBounds = YES;
+    NSInteger index = sender.tag;
     
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(buttonIconLongPressed:)];
-    [buttonIcon addGestureRecognizer:longPress];
-    
-    return buttonIcon;
-}
-
--(void)addSubview:(UIView *)view
-{
-    if(!self.innerSubviews)
+    // 删除此位置的按钮
+    if(index < self.itemViews.count)
     {
-        self.innerSubviews = [[NSMutableArray alloc]init];
+        [UIView animateWithDuration:item_delete_animation_duration animations:^{
+            BPBLaunchItemView* currentItem = [self.itemViews objectAtIndex:index];
+            [currentItem removeFromSuperview];
+            
+            for (int iCnt = self.itemViews.count - 1; iCnt > index; iCnt--)
+            {
+                BPBLaunchItemView* item = (BPBLaunchItemView*)[self.itemViews objectAtIndex:iCnt];
+                BPBLaunchItemView* preItem = (BPBLaunchItemView*)[self.itemViews objectAtIndex:iCnt-1];
+                item.frame = preItem.frame;
+                item.tag = preItem.tag;
+                NSLog(@"tag:%d",item.tag);
+            }
+            [self.itemViews removeObject:currentItem];
+        }];
+        
+        
+        if(self.dataSource && [self.dataSource respondsToSelector:@selector(deleteItemAtIndex:)])
+        {
+            id<BPBLaunchScrollViewDataSource> bpbLaunchDataSource = (id<BPBLaunchScrollViewDataSource>)self.dataSource;
+            [bpbLaunchDataSource deleteItemAtIndex:index];
+            NSLog(@"buttonDeleteClicked:%d",index);
+        }
     }
     
-    [self.innerSubviews addObject:view];
-    
-    [super addSubview:view];
+
 }
--(void)removeAllInnerSubviews
+-(void)buttonIconLongPressed:(UIButton*)sender
 {
-    for (UIView* innerSubview in self.innerSubviews) {
-        [innerSubview removeFromSuperview];
+    if(!self.editMode)
+    {
+        self.editMode = YES;
+    }
+    
+    if(self.delegate && [self.delegate respondsToSelector:@selector(BPBLaunchController:longPressed:)])
+    {
+        id<BPBLaunchScrollViewDelegate> bpbLaunchDelegate = (id<BPBLaunchScrollViewDelegate>)self.delegate;
+        [bpbLaunchDelegate BPBLaunchController:self longPressed:sender.tag];
+        NSLog(@"longPressedIcon:%d",sender.tag);
     }
 }
+
+
 
 -(void)reloadData
 {
     // 移除所有的subview     remove all subviews
-    [self removeAllInnerSubviews];
+    for (BPBLaunchItemView* item in self.itemViews) {
+        [item removeFromSuperview];
+    }
+    [self.itemViews removeAllObjects];
     
     // 中心点间距    space between icon center point
     CGFloat spaceCenter = (self.frame.size.width - self.contentInset.left - self.contentInset.right - total_width)/(self.numberOfColumns - 1);
@@ -163,23 +221,36 @@
         int iRow = iCnt / numberOfColumns;
         int iCol = iCnt % numberOfColumns;
         
-        // 承载的背景标签 label that will contain icon and title
-        UILabel* labelBackground = [[UILabel alloc]init];
-        CGRect frame = labelBackground.frame;
+        // create itemView
+        CGRect frame = CGRectZero;
         frame.size = CGSizeMake(total_width, total_height);
-        labelBackground.frame = frame;
-        labelBackground.backgroundColor = [UIColor clearColor];
-        labelBackground.userInteractionEnabled = YES;
-        
+        BPBLaunchItemView* item = [[BPBLaunchItemView alloc]initWithFrame:frame];
+        item.tag = iCnt;
+
         // 计算位置 caculate center point
         CGFloat centerX = total_width / 2 + spaceCenter*iCol;
         CGFloat centerY = total_height / 2 + (total_height + spaceBorder)*iRow;
-        labelBackground.center = CGPointMake(centerX, centerY);
+        item.center = CGPointMake(centerX, centerY);        
         NSLog(@"iCnt:%d (%f,%f)",iCnt,centerX,centerY);
         
-        // 增加图标按钮 add icon
-        UIButton* buttonIcon = [self createButtonWithTag:iCnt];
-        [labelBackground addSubview:buttonIcon];
+        // 设置删除按钮   set delete button
+        if(editMode)
+        {
+            item.buttonDelete.alpha = 1;
+        }
+        else
+        {
+            item.buttonDelete.alpha = 0;
+        }
+        [item.buttonDelete addTarget:self action:@selector(buttonDeleteClicked:) forControlEvents:UIControlEventTouchUpInside];
+        
+        // 设置图标按钮   set icon button
+        [item.buttonIcon addTarget:self action:@selector(buttonIconClicked:) forControlEvents:UIControlEventTouchUpInside];
+        item.buttonIcon.layer.cornerRadius = self.iconCornerRadius;
+        
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(buttonIconLongPressed:)];
+        [item.buttonIcon addGestureRecognizer:longPress];
+        
 
         // 设置图标图片 set icon image by url
         BOOL imgAlreadySet = NO;
@@ -188,7 +259,7 @@
         UIImage* bundleImg = [BPBTool loadBundleImageWhenImageUrl:imgUrl withPrefix:imageUrlPrefixArray];
         if(bundleImg)
         {
-            [buttonIcon setImage:bundleImg forState:UIControlStateNormal];
+            [item.buttonIcon setImage:bundleImg forState:UIControlStateNormal];
             imgAlreadySet = YES;
         }
  
@@ -197,7 +268,7 @@
             UIImage* cachedImg = [BPBTool loadCacheImage:imgUrl];
             if(cachedImg)
             {
-                [buttonIcon setImage:cachedImg forState:UIControlStateNormal];
+                [item.buttonIcon setImage:cachedImg forState:UIControlStateNormal];
                 imgAlreadySet = YES;
             }
         }
@@ -206,52 +277,25 @@
         {
             if(self.defaultIconImage)
             {
-                [buttonIcon setImage:self.defaultIconImage forState:UIControlStateNormal];
+                [item.buttonIcon setImage:self.defaultIconImage forState:UIControlStateNormal];
             }
             
             [BPBTool loadRemoteImage:imgUrl usingCache:YES completion:^(BOOL success, UIImage *image, NSError *error) {
                 if(success)
                 {
                     // 替换图标图片    use new button with loaded image
-                    UIButton* newButtonIcon = [self createButtonWithTag:iCnt];
-                    
-                    newButtonIcon.alpha = 0;
-                    [newButtonIcon setImage:image forState:UIControlStateNormal];
-                    [labelBackground addSubview:newButtonIcon];
-                    
-                    // 老的按钮淡出，新按钮淡入  old button fade out while new button fade in
-                    [UIView animateWithDuration:1 animations:^{
-                        newButtonIcon.alpha = 1;
-                        buttonIcon.alpha = 0;
-                    } completion:^(BOOL finished) {
-                        if(buttonIcon.superview)
-                        {
-                            [buttonIcon removeFromSuperview];
-                        }
-                        else
-                        {
-                            NSLog(@"buttonIcon.superview is nil");
-                        }
-                    }];
+                    [item.buttonIcon setImage:image forState:UIControlStateNormal];
                 }
             }];
 
         }
              
         // 增加文字     add title
-        UILabel* labelTitle = [[UILabel alloc]initWithFrame:CGRectMake(0, icon_height + between_title_icon, title_width, title_height)];
-        // todo 可由外部设置  these can be set outside
-        labelTitle.font = title_font;
-        labelTitle.textAlignment = UITextAlignmentCenter;
-        labelTitle.textColor = [UIColor whiteColor];
-        labelTitle.shadowColor = [UIColor darkGrayColor];
-        labelTitle.shadowOffset = CGSizeMake(0, 1);
-        labelTitle.backgroundColor = [UIColor clearColor];
-        NSString* title = [self.dataSource titleAtIndex:iCnt];
-        labelTitle.text = title;
+        item.labelName.text = [self.dataSource titleAtIndex:iCnt];
         
-        [labelBackground addSubview:labelTitle];
-        [self addSubview:labelBackground];
+        
+        [self.itemViews addObject:item];
+        [self addSubview:item];
     }
 }
 
@@ -264,6 +308,7 @@
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [super touchesEnded:touches withEvent:event];
+    self.editMode = NO;
 }
 
 @end

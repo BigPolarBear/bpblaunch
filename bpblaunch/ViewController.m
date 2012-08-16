@@ -53,7 +53,7 @@
 // 有多少元素要显示    How many items need
 -(NSInteger)numberOfUserInfoInBPBLaunchController:(BPBLaunchScrollView*)launchController
 {
-    return 100;
+    return 10;
 }
 
 
