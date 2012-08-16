@@ -119,4 +119,36 @@
     }
 }
 
+#pragma mark 文本相关   Text Related
++(CGSize)textSize:(NSString*)text font:(UIFont*)font
+{
+    CGSize containSize = CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX);
+    CGSize strSize = [text sizeWithFont:font constrainedToSize:containSize
+                          lineBreakMode:UILineBreakModeCharacterWrap];
+    return strSize;
+}
+
++(CGFloat)textHeight:(NSString*)text width:(CGFloat)width font:(UIFont*)font
+{
+    CGSize containSize = CGSizeMake(width, CGFLOAT_MAX);
+    CGSize strSize = [text sizeWithFont:font constrainedToSize:containSize
+                          lineBreakMode:UILineBreakModeCharacterWrap];
+    return strSize.height;
+}
+
++(NSInteger)textLineNumbers:(NSString*)text width:(float)width font:(UIFont*)font
+{
+    CGSize containSize = CGSizeMake(width, CGFLOAT_MAX);
+    containSize.width = width;
+    CGSize textSize = [text sizeWithFont:font constrainedToSize:containSize lineBreakMode:UILineBreakModeWordWrap];
+    CGFloat lineHeight = [BPBTool textSize:text font:font].height;
+    
+    NSInteger lineNumber = textSize.height / lineHeight;
+    if(lineNumber * lineHeight < textSize.height)
+    {
+        lineNumber++;
+    }
+    return textSize.height / lineHeight;
+}
+
 @end

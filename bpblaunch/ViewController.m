@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "BPBTool.h"
 
 @interface ViewController ()
 
@@ -34,6 +35,20 @@
     // 设置datasource和delegate    set datasource and delegate must be put in the end
     self.launchScrollView.dataSource = self;
     self.launchScrollView.delegate = self;
+    
+    NSString* text = @"abceefghijklmnopqrstuvwxyz";
+    UIFont* font = [UIFont boldSystemFontOfSize:20];
+    font = [UIFont systemFontOfSize:20];
+    
+    CGFloat lineHeight = [BPBTool textHeight:text width:160 font:font];
+    NSInteger lineNumber = [BPBTool textLineNumbers:text width:160 font:font];
+    CGFloat textWidth = [BPBTool textSize:text font:font].width;
+    NSLog(@"\nlineHeight:%f\n"
+          "lineNumber:%d\n"
+          "textWidth:%f"
+          ,lineHeight
+          ,lineNumber
+          ,textWidth);
     
     [self.view addSubview:self.launchScrollView];
 }
