@@ -21,6 +21,7 @@
 {
 }
 @property (nonatomic,retain) NSMutableArray* itemViews;
+@property (nonatomic,retain) NSMutableArray* buttonDeletes;
 
 -(void)buttonIconLongPressed:(id)sender;
 
@@ -62,15 +63,15 @@
     editMode = newEditMode;
     
     // 所有图标左上角的删除按钮显示 show the cancel top left cancel button of icon
-    for (BPBLaunchItemView* item in self.itemViews) {
+    for (UIButton* item in self.buttonDeletes) {
         [UIView animateWithDuration:cancel_button_show_animation_duration animations:^{
             if(editMode)
             {
-                item.buttonDelete.alpha = 1;
+                item.alpha = 1;
             }
             else
             {
-                item.buttonDelete.alpha = 0;
+                item.alpha = 0;
             }
         }];
     }
@@ -83,8 +84,16 @@
     {
         itemViews = [[NSMutableArray alloc]init];
     }
-    
     return itemViews;
+}
+@synthesize buttonDeletes;
+-(NSMutableArray*)buttonDeletes
+{
+    if(!buttonDeletes)
+    {
+        buttonDeletes = [[NSMutableArray alloc]init];
+    }
+    return buttonDeletes;
 }
 
 -(id)init
@@ -112,14 +121,17 @@
 {
     if(self.editMode)
     {
-        // 编辑模式下，点击图标事件无效   in edit mode，ignore icon click event
+        // 退出编辑模式   exit edit mode
+        self.editMode = NO;
         return;
     }
-    
-    if(self.delegate && [self.delegate conformsToProtocol:@protocol(BPBLaunchScrollViewDelegate)])
+    else
     {
-        id<BPBLaunchScrollViewDelegate> bpbLaunchDelegate = (id<BPBLaunchScrollViewDelegate>)self.delegate;
-        [bpbLaunchDelegate BPBLaunchController:self didClicked:sender.tag];
+        if(self.delegate && [self.delegate conformsToProtocol:@protocol(BPBLaunchScrollViewDelegate)])
+        {
+            id<BPBLaunchScrollViewDelegate> bpbLaunchDelegate = (id<BPBLaunchScrollViewDelegate>)self.delegate;
+            [bpbLaunchDelegate BPBLaunchController:self didClicked:sender.tag];
+        }
     }
 }
 -(void)buttonDeleteClicked:(UIButton*)sender
@@ -132,6 +144,8 @@
         [UIView animateWithDuration:item_delete_animation_duration animations:^{
             BPBLaunchItemView* currentItem = [self.itemViews objectAtIndex:index];
             [currentItem removeFromSuperview];
+            UIButton* currentButtonDelete = [self.buttonDeletes objectAtIndex:index];
+            [currentButtonDelete removeFromSuperview];
             
             for (int iCnt = self.itemViews.count - 1; iCnt > index; iCnt--)
             {
@@ -139,9 +153,16 @@
                 BPBLaunchItemView* preItem = (BPBLaunchItemView*)[self.itemViews objectAtIndex:iCnt-1];
                 item.frame = preItem.frame;
                 item.tag = preItem.tag;
+                
+                UIButton* buttonDelete = (UIButton*)[self.buttonDeletes objectAtIndex:iCnt];
+                UIButton* preButtonDelete = (UIButton*)[self.buttonDeletes objectAtIndex:iCnt-1];
+                buttonDelete.frame = preButtonDelete.frame;
+                buttonDelete.tag = preButtonDelete.tag;
+                
                 NSLog(@"tag:%d",item.tag);
             }
-            [self.itemViews removeObject:currentItem];
+            [self.itemViews removeObjectAtIndex:index];
+            [self.buttonDeletes removeObjectAtIndex:index];
         }];
         
         
@@ -179,6 +200,11 @@
         [item removeFromSuperview];
     }
     [self.itemViews removeAllObjects];
+    
+    for (UIButton* button in self.buttonDeletes) {
+        [button removeFromSuperview];
+    }
+    [self.buttonDeletes removeAllObjects];
     
     // 中心点间距    space between icon center point
     CGFloat spaceCenter = (self.frame.size.width - self.contentInset.left - self.contentInset.right - total_width)/(self.numberOfColumns - 1);
@@ -234,15 +260,26 @@
         NSLog(@"iCnt:%d (%f,%f)",iCnt,centerX,centerY);
         
         // 设置删除按钮   set delete button
+        // 添加删除按钮   add delete button
+        UIButton* buttonDelete = [[UIButton alloc]initWithFrame:CGRectMake(0,0, cancel_button_width, cancel_button_height)];
+        buttonDelete.center = item.frame.origin;
+        buttonDelete.tag = iCnt;
+        [buttonDelete setBackgroundColor:[UIColor blackColor]];
+        buttonDelete.clipsToBounds = NO;
+        
+        buttonDelete.titleLabel.textAlignment = UITextAlignmentCenter;
+        buttonDelete.titleLabel.font = cancel_button_font;
+        [buttonDelete setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        buttonDelete.backgroundColor = [UIColor lightGrayColor];
         if(editMode)
         {
-            item.buttonDelete.alpha = 1;
+            buttonDelete.alpha = 1;
         }
         else
         {
-            item.buttonDelete.alpha = 0;
+            buttonDelete.alpha = 0;
         }
-        [item.buttonDelete addTarget:self action:@selector(buttonDeleteClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [buttonDelete addTarget:self action:@selector(buttonDeleteClicked:) forControlEvents:UIControlEventTouchUpInside];
         
         // 设置图标按钮   set icon button
         [item.buttonIcon addTarget:self action:@selector(buttonIconClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -294,8 +331,11 @@
         item.labelName.text = [self.dataSource titleAtIndex:iCnt];
         
         
-        [self.itemViews addObject:item];
         [self addSubview:item];
+        [self addSubview:buttonDelete];
+        
+        [self.itemViews addObject:item];
+        [self.buttonDeletes addObject:buttonDelete];
     }
 }
 

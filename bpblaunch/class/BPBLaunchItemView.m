@@ -13,13 +13,12 @@
 
 @implementation BPBLaunchItemView
 
-@synthesize buttonDelete,buttonIcon,labelName;
+@synthesize buttonIcon,labelName;
 
 -(void)setTag:(NSInteger)tag
 {
     // all subview with the same tag value
     self.buttonIcon.tag = tag;
-    self.buttonDelete.tag = tag;
     self.labelName.tag = tag;
     
     [super setTag:tag];
@@ -40,19 +39,6 @@
         // 添加图标按钮 add icon button
         self.buttonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
         buttonIcon.clipsToBounds = YES;
-        
-        // 添加删除按钮   add delete button
-        self.buttonDelete = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, cancel_button_width, cancel_button_height)];
-        [self.buttonDelete setBackgroundColor:[UIColor blackColor]];
-        self.buttonDelete.center = self.buttonIcon.center;
-        self.buttonDelete.clipsToBounds = NO;
-        
-        self.buttonDelete.titleLabel.textAlignment = UITextAlignmentCenter;
-        self.buttonDelete.titleLabel.font = cancel_button_font;
-//        [self.buttonDelete setTitle:@"-" forState:UIControlStateNormal];
-        [self.buttonDelete setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        self.buttonDelete.backgroundColor = [UIColor lightGrayColor];
-            
             
         // 增加文字     add title
         self.labelName = [[UILabel alloc]initWithFrame:CGRectMake(0, icon_height + between_title_icon, title_width, title_height)];
@@ -64,7 +50,6 @@
         self.labelName.backgroundColor = [UIColor clearColor];
         
         [self addSubview:self.buttonIcon];
-        [self addSubview:self.buttonDelete];
         [self addSubview:self.labelName];
     }
     return self;

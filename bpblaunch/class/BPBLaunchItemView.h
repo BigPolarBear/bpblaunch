@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-#define cancel_button_width     32
-#define cancel_button_height    32
+#define cancel_button_width     20
+#define cancel_button_height    20
 #define cancel_button_font      [UIFont boldSystemFontOfSize:20]
 #define cancel_button_show_animation_duration   0.3
 
@@ -28,7 +28,6 @@
 @interface BPBLaunchItemView : UIView
 
 @property (nonatomic,retain) UIButton* buttonIcon;
-@property (nonatomic,retain) UIButton* buttonDelete;
 @property (nonatomic,retain) UILabel* labelName;
 
 @end
