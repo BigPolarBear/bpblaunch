@@ -71,8 +71,14 @@
     return index%2 == 0;
 }
 
+// 移动元素位置       move item
+-(void)moveItemFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex
+{
+    NSLog(@"moveItemFromIndex:toIndex:");
+}
+
 // 有多少元素要显示    How many items need
--(NSInteger)numberOfUserInfoInBPBLaunchController:(BPBLaunchScrollView*)launchController
+-(NSInteger)numberOfItemsInBPBLaunchController:(BPBLaunchScrollView*)launchController
 {
     return 10;
 }

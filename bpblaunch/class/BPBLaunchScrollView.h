@@ -14,7 +14,7 @@
 @protocol BPBLaunchScrollViewDataSource <NSObject>
 
 // 有多少元素要显示    How many items need
--(NSInteger)numberOfUserInfoInBPBLaunchController:(BPBLaunchScrollView*)launchController;
+-(NSInteger)numberOfItemsInBPBLaunchController:(BPBLaunchScrollView*)launchController;
 // 要显示的图标url    The image url at index
 -(NSString*)imageUrlAtIndex:(NSInteger)index;
 // 要显示的名称       The title at index
@@ -27,7 +27,7 @@
 // 删除此位置的元素    Delete the item at index
 -(void)deleteItemAtIndex:(NSInteger)index;
 // 移动元素位置       move item
-//-(void)moveItemFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex;
+-(void)moveItemFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex;
 
 @end
 

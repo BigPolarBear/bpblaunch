@@ -19,12 +19,20 @@
 
 @interface BPBLaunchScrollView ()
 {
+    int numberOfItems;
+    
+    NSInteger dragItemIndex;
 }
 @property (nonatomic,retain) NSMutableArray* itemViews;
 @property (nonatomic,retain) NSMutableArray* buttonDeletes;
+@property (nonatomic,retain) NSMutableArray* longPressGestureRecognizers;
 
 -(void)handleLongPressGesture:(UIGestureRecognizer*)recognizer;
 
+// 获取此位置最近的item的索引
+-(NSInteger)nearestIndexAtPosition:(CGPoint)position;
+// 指定索引位置的item的所应处于的center
+-(CGPoint)centerAtIndex:(NSInteger)index;
 
 
 
@@ -38,10 +46,23 @@
 
 
 #pragma mark property
+
 @synthesize defaultIconImage;
 @synthesize allowEnableEditMode;
 @synthesize iconCornerRadius;
 @synthesize imageUrlPrefixArray;
+
+
+@synthesize longPressGestureRecognizers;
+-(NSMutableArray*)longPressGestureRecognizers
+{
+    if(!longPressGestureRecognizers)
+    {
+        longPressGestureRecognizers = [[NSMutableArray alloc]init];
+    }
+    
+    return longPressGestureRecognizers;
+}
 
 @synthesize dataSource;
 -(void)setDataSource:(id<BPBLaunchScrollViewDataSource>)ds
@@ -84,6 +105,19 @@
             }
         }];
     }
+    
+    CFTimeInterval pressDuration;
+    if(editMode)
+    {
+        pressDuration = 0;
+    }
+    else
+    {
+        pressDuration = 1;
+    }
+    for (UILongPressGestureRecognizer* recognizer in self.longPressGestureRecognizers) {
+        [recognizer setMinimumPressDuration:pressDuration];
+    }
  }
 
 @synthesize itemViews;
@@ -120,9 +154,9 @@
     
     self.userInteractionEnabled = YES;
     
-    self.bounces = NO;
-    self.alwaysBounceHorizontal = NO;
-    self.alwaysBounceVertical = NO;
+//    self.bounces = YES;
+//    self.alwaysBounceHorizontal = NO;
+//    self.alwaysBounceVertical = NO;
     
     return self;
 }
@@ -192,6 +226,10 @@
 
 -(void)handleLongPressGesture:(UIGestureRecognizer*)recognizer
 {
+    CGPoint position = [recognizer locationInView:self];
+    NSInteger nearestIndex = [self nearestIndexAtPosition:position];
+
+    
     if(!self.editMode)
     {
         self.editMode = YES;
@@ -199,28 +237,113 @@
     
     if(recognizer.state == UIGestureRecognizerStateBegan)
     {
-        //if needed do some initial setup or init of views here
+        // if needed do some initial setup or init of views here
+        dragItemIndex = nearestIndex;
     }
     else if(recognizer.state == UIGestureRecognizerStateChanged)
     {
-//        //move your views here.
-//        if([recognizer.view.superview isKindOfClass:[BPBLaunchItemView class]])
-//        {
-//            BPBLaunchItemView* currentItem = (BPBLaunchItemView*)recognizer.view.superview;
-//            UIButton* currentButtonDelete = (UIButton*)[self.buttonDeletes objectAtIndex:currentItem.tag];
-//            
-//            currentItem.center = [recognizer locationInView:self];
-//            currentButtonDelete.center = currentItem.frame.origin;
-//        }
+        // move your views here.
+        if([recognizer.view.superview isKindOfClass:[BPBLaunchItemView class]])
+        {
+            BPBLaunchItemView* currentItem = (BPBLaunchItemView*)recognizer.view.superview;
+            UIButton* currentButtonDelete = (UIButton*)[self.buttonDeletes objectAtIndex:currentItem.tag];
+            
+            // 更新界面位置   change items center
+            currentItem.center = position;
+            currentButtonDelete.center = currentItem.frame.origin;
+            
+            if (dragItemIndex != nearestIndex) {
+                
+                // 改变数组中位置 change itemViews
+                [self.itemViews removeObject:currentItem];
+                [self.itemViews insertObject:currentItem atIndex:nearestIndex];
+                currentItem.tag = nearestIndex;
+                
+                // 改变数组中位置 change buttonDeletes
+                [self.buttonDeletes removeObject:currentButtonDelete];
+                [self.buttonDeletes insertObject:currentButtonDelete atIndex:nearestIndex];
+                currentButtonDelete.tag = nearestIndex;
+                
+                [UIView animateWithDuration:0.3 animations:^{
+                    if(dragItemIndex > nearestIndex)
+                    {
+                        for(int iCnt = nearestIndex + 1; iCnt <= dragItemIndex; iCnt++)
+                        {
+                            BPBLaunchItemView* item = [self.itemViews objectAtIndex:iCnt];
+                            UIButton* buttonDelete = [self.buttonDeletes objectAtIndex:iCnt];
+                            
+                            // update tag
+                            item.tag = iCnt;
+                            buttonDelete.tag = iCnt;
+                            
+                            // update center
+                            item.center = [self centerAtIndex:iCnt];
+                            buttonDelete.center = item.frame.origin;
+                        }
+                    }
+                    else if(dragItemIndex < nearestIndex)
+                    {
+                        for(int iCnt = dragItemIndex; iCnt < nearestIndex; iCnt++)
+                        {
+                            BPBLaunchItemView* item = [self.itemViews objectAtIndex:iCnt];
+                            UIButton* buttonDelete = [self.buttonDeletes objectAtIndex:iCnt];
+                            
+                            // update tag
+                            item.tag = iCnt;
+                            buttonDelete.tag = iCnt;
+                            
+                            // update center
+                            item.center = [self centerAtIndex:iCnt];
+                            buttonDelete.center = item.frame.origin;
+                        }
+                    }
+                }];
+                
+                if ([self.dataSource respondsToSelector:@selector(moveItemFromIndex:toIndex:)]) {
+                    id<BPBLaunchScrollViewDataSource> ds = (id<BPBLaunchScrollViewDataSource>)self.dataSource;
+                    [ds moveItemFromIndex:dragItemIndex toIndex:nearestIndex];
+                }
+                
+                dragItemIndex = nearestIndex;
+            }
+
+        }
     }
     else if(recognizer.state == UIGestureRecognizerStateEnded)
     {
+        [UIView animateWithDuration:0.3 animations:^{
+            BPBLaunchItemView* dragItem = [self.itemViews objectAtIndex:dragItemIndex];
+            UIButton* buttonDelete = [self.buttonDeletes objectAtIndex:dragItemIndex];
+            
+            dragItem.center = [self centerAtIndex:dragItemIndex];
+            buttonDelete.center = dragItem.frame.origin;
+        }];
         //else do cleanup
     }    
 }
 
 #pragma mark private
--(CGPoint)getCenterAtIndex:(NSInteger)index
+// 获取此位置最近的item的索引
+-(NSInteger)nearestIndexAtPosition:(CGPoint)position
+{
+    NSInteger nearestIndex = 0;
+    CGFloat nearestDistancePow = CGFLOAT_MAX;
+    
+    for(int iCnt = 0; iCnt < numberOfItems; iCnt++)
+    {
+        CGPoint center = [self centerAtIndex:iCnt];
+        CGFloat distancePow = pow(center.x - position.x, 2) + pow(center.y-position.y, 2);
+        if(distancePow < nearestDistancePow)
+        {
+            nearestDistancePow = distancePow;
+            nearestIndex = iCnt;
+        }
+    }
+    
+    return nearestIndex;
+}
+
+-(CGPoint)centerAtIndex:(NSInteger)index
 {
     int iRow = index / numberOfColumns;
     int iCol = index % numberOfColumns;
@@ -260,20 +383,20 @@
     
     
     // 总数       get number of items
-    int numberOfUserInfo = [self.dataSource numberOfUserInfoInBPBLaunchController:self];
+    numberOfItems = [self.dataSource numberOfItemsInBPBLaunchController:self];
     // 有多少行    number of rows
     int numberOfRows;
-    if(numberOfUserInfo == 0)
+    if(numberOfItems == 0)
     {
         numberOfRows = 0;
     }
-    else if(numberOfUserInfo % self.numberOfColumns == 0)
+    else if(numberOfItems % self.numberOfColumns == 0)
     {
-        numberOfRows = numberOfUserInfo / self.numberOfColumns;
+        numberOfRows = numberOfItems / self.numberOfColumns;
     }
     else
     {
-        numberOfRows = numberOfUserInfo / self.numberOfColumns + 1;
+        numberOfRows = numberOfItems / self.numberOfColumns + 1;
     }
 
     float heightOfContent = total_height * numberOfRows + (numberOfRows-1) * spaceBorder;
@@ -288,7 +411,7 @@
     NSLog(@"contentOffset:(%f,%f)",self.contentOffset.x,self.contentOffset.y);
 
     
-    for (int iCnt = 0; iCnt<numberOfUserInfo; iCnt++)
+    for (int iCnt = 0; iCnt<numberOfItems; iCnt++)
     {   
         // create itemView
         CGRect frame = CGRectZero;
@@ -297,7 +420,7 @@
         item.tag = iCnt;
 
         // 计算位置 caculate center point
-        item.center = [self getCenterAtIndex:iCnt];
+        item.center = [self centerAtIndex:iCnt];
         
         // 设置删除按钮   set delete button
         // 添加删除按钮   add delete button
@@ -328,6 +451,7 @@
         UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
         longPress.allowableMovement = YES;
         [item.buttonIcon addGestureRecognizer:longPress];
+        [self.longPressGestureRecognizers addObject:longPress];
         
 
         // 设置图标图片 set icon image by url
@@ -381,7 +505,6 @@
 }
 
 #pragma mark touch
-
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
