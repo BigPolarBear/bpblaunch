@@ -223,15 +223,14 @@
             }
             [self.itemViews removeObjectAtIndex:index];
             [self.buttonDeletes removeObjectAtIndex:index];
+        } completion:^(BOOL finished) {
+            if(self.dataSource && [self.dataSource respondsToSelector:@selector(deleteItemAtIndex:)])
+            {
+                id<BPBLaunchScrollViewDataSource> bpbLaunchDataSource = (id<BPBLaunchScrollViewDataSource>)self.dataSource;
+                [bpbLaunchDataSource deleteItemAtIndex:index];
+                NSLog(@"buttonDeleteClicked:%d",index);
+            }
         }];
-        
-        
-        if(self.dataSource && [self.dataSource respondsToSelector:@selector(deleteItemAtIndex:)])
-        {
-            id<BPBLaunchScrollViewDataSource> bpbLaunchDataSource = (id<BPBLaunchScrollViewDataSource>)self.dataSource;
-            [bpbLaunchDataSource deleteItemAtIndex:index];
-            NSLog(@"buttonDeleteClicked:%d",index);
-        }
     }
     
 
