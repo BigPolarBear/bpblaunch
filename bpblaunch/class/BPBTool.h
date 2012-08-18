@@ -19,6 +19,8 @@
 
 /** 异步加载url地址对应的图片  loading remote image url */
 +(void)loadRemoteImage:(NSString*)urlStr
+           usingBundle:(BOOL)usingBundle
+   prefixArrayOfBundle:(NSArray*)arrayPrefix
             usingCache:(BOOL)usingCache
             completion:(void(^)(BOOL success,UIImage* image,NSError* error))completionHander;
 

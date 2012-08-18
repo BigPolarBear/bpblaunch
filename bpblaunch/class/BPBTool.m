@@ -53,12 +53,20 @@
 }
 
 +(void)loadRemoteImage:(NSString*)urlStr
+           usingBundle:(BOOL)usingBundle
+   prefixArrayOfBundle:(NSArray*)arrayPrefix
             usingCache:(BOOL)usingCache
             completion:(void(^)(BOOL success,UIImage* image,NSError* error))completionHander
 {
     NSString* filePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSAllDomainsMask, YES) objectAtIndex:0];
     filePath = [filePath stringByAppendingFormat:@"/%@",[urlStr lastPathComponent]];
     NSFileManager* fileManager = [NSFileManager defaultManager];
+    
+    UIImage* imageBundle = nil;
+    if(usingBundle && arrayPrefix.count > 0)
+    {
+        imageBundle = [self loadBundleImageWhenImageUrl:urlStr withPrefix:arrayPrefix];
+    }
     
     UIImage* imageCached = nil;
     if (usingCache && [fileManager fileExistsAtPath:filePath])

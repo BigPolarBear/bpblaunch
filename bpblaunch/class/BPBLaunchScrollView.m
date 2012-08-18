@@ -482,7 +482,12 @@
                 [item.buttonIcon setImage:self.defaultIconImage forState:UIControlStateNormal];
             }
             
-            [BPBTool loadRemoteImage:imgUrl usingCache:YES completion:^(BOOL success, UIImage *image, NSError *error) {
+            [BPBTool loadRemoteImage:imgUrl
+                         usingBundle:NO
+                 prefixArrayOfBundle:nil
+                          usingCache:YES
+                          completion:^(BOOL success, UIImage *image, NSError *error)
+            {
                 if(success)
                 {
                     // 替换图标图片    use new button with loaded image
