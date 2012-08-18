@@ -441,13 +441,11 @@
         UIButton* buttonDelete = [[UIButton alloc]initWithFrame:CGRectMake(0,0, cancel_button_width, cancel_button_height)];
         buttonDelete.center = item.frame.origin;
         buttonDelete.tag = iCnt;
-//        [buttonDelete setBackgroundColor:[UIColor blackColor]];
         buttonDelete.clipsToBounds = NO;
         
         buttonDelete.titleLabel.textAlignment = UITextAlignmentCenter;
         buttonDelete.titleLabel.font = cancel_button_font;
         [buttonDelete setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//        buttonDelete.backgroundColor = [UIColor lightGrayColor];
         if(imageOfDeleteButton)
         {
             [buttonDelete setImage:imageOfDeleteButton forState:UIControlStateNormal];
