@@ -53,6 +53,21 @@
 @synthesize imageUrlPrefixArray;
 
 
+
+@synthesize imageOfDeleteButton;
+-(void)setImageOfDeleteButton:(UIImage *)newImageOfDeleteButton
+{
+    if(newImageOfDeleteButton == imageOfDeleteButton)
+    {
+        return;
+    }
+    
+    for (UIButton* button in self.buttonDeletes) {
+        [button setImage:newImageOfDeleteButton forState:UIControlStateNormal];
+    }
+    imageOfDeleteButton = newImageOfDeleteButton;
+}
+
 @synthesize longPressGestureRecognizers;
 -(NSMutableArray*)longPressGestureRecognizers
 {
@@ -422,7 +437,6 @@
         // 计算位置 caculate center point
         item.center = [self centerAtIndex:iCnt];
         
-        // 设置删除按钮   set delete button
         // 添加删除按钮   add delete button
         UIButton* buttonDelete = [[UIButton alloc]initWithFrame:CGRectMake(0,0, cancel_button_width, cancel_button_height)];
         buttonDelete.center = item.frame.origin;
@@ -434,6 +448,11 @@
         buttonDelete.titleLabel.font = cancel_button_font;
         [buttonDelete setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         buttonDelete.backgroundColor = [UIColor lightGrayColor];
+        if(imageOfDeleteButton)
+        {
+            [buttonDelete setImage:imageOfDeleteButton forState:UIControlStateNormal];
+        }
+        
         if(editMode)
         {
             buttonDelete.alpha = 1;

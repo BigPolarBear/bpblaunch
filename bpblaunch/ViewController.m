@@ -26,6 +26,7 @@
     self.launchScrollView = [[BPBLaunchScrollView alloc]initWithFrame:self.view.frame];
     // 设置默认的icon图片  set default icon image
     self.launchScrollView.defaultIconImage = [UIImage imageNamed:@"gravatar"];
+    self.launchScrollView.imageOfDeleteButton = [UIImage imageNamed:@"gravatar"];
     self.launchScrollView.contentInset = UIEdgeInsetsMake(12, 12, 16, 16);
     self.launchScrollView.iconCornerRadius = 8;
     
