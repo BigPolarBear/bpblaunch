@@ -10,6 +10,12 @@
 
 @interface BPBTool : NSObject
 
+#pragma mark 颜色相关
+// 十六进制设置颜色
+#define Color_HEX(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+#define Color_RGB(r,g,b,a) [UIColor colorWithRed:(float)r green:(float)g blue:(float)b alpha:a]
+#define Color_RGB255(r,g,b,a) [UIColor colorWithRed:(float)r/255 green:(float)g/255 blue:(float)b/255 alpha:a]
+
 #pragma mark 图片加载相关 Image Loading Related
 /** 如果图片的url以给定的地址前缀开头，则尝试加载bundle里去除前缀的同名图片 when imageUrl has given urlPrefix then load bundle image with the same name without prefix */
 +(UIImage*)loadBundleImageWhenImageUrl:(NSString*)imageUrl withPrefix:(NSArray*)arrayPrefix;
