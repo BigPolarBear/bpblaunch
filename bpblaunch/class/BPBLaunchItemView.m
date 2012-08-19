@@ -31,9 +31,9 @@
             // 承载的背景标签 label that will contain icon and title
         self.frame = frame;
 
-            self.backgroundColor = [UIColor clearColor];
-            self.userInteractionEnabled = YES;
-            self.clipsToBounds = NO;
+        self.backgroundColor = [UIColor clearColor];
+        self.userInteractionEnabled = YES;
+        self.clipsToBounds = YES;
         
             
         // 添加图标按钮 add icon button
