@@ -48,6 +48,7 @@
 @property (assign,nonatomic) NSInteger numberOfColumns;
 @property (strong,nonatomic) UIImage* defaultIconImage;
 @property (strong,nonatomic) UIImage* imageOfDeleteButton;
+@property (strong,nonatomic) UIColor* nameColor;
 
 // 重新加载数据 reloadData
 -(void)reloadData;

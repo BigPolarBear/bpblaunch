@@ -53,6 +53,15 @@
 @synthesize imageUrlPrefixArray;
 
 
+@synthesize nameColor;
+-(void)setNameColor:(UIColor *)newNameColor
+{
+    nameColor = [newNameColor copy];
+    
+    for (BPBLaunchItemView* item in self.itemViews) {
+        item.labelName.textColor = nameColor;
+    }
+}
 
 @synthesize imageOfDeleteButton;
 -(void)setImageOfDeleteButton:(UIImage *)newImageOfDeleteButton
@@ -515,6 +524,10 @@
              
         // 增加文字     add title
         item.labelName.text = [self.dataSource titleAtIndex:iCnt];
+        if(self.nameColor)
+        {
+            item.labelName.textColor = nameColor;
+        }
         
         
         [self addSubview:item];
