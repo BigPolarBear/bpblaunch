@@ -53,6 +53,16 @@
 @synthesize imageUrlPrefixArray;
 
 
+@synthesize nameShadowColor;
+-(void)setNameShadowColor:(UIColor *)newNameShadowColor
+{
+    nameShadowColor = [newNameShadowColor copy];
+    
+    for (BPBLaunchItemView* item in self.itemViews) {
+        item.labelName.shadowColor = nameShadowColor;
+    }
+}
+
 @synthesize nameColor;
 -(void)setNameColor:(UIColor *)newNameColor
 {
@@ -527,6 +537,10 @@
         if(self.nameColor)
         {
             item.labelName.textColor = nameColor;
+        }
+        if(self.nameShadowColor)
+        {
+            item.labelName.shadowColor = nameShadowColor;
         }
         
         
