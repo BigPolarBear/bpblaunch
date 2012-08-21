@@ -49,6 +49,9 @@
         self.labelName.shadowOffset = CGSizeMake(0, 1);
         self.labelName.backgroundColor = [UIColor clearColor];
         
+        
+        self.buttonIcon.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+        self.labelName.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
         [self addSubview:self.buttonIcon];
         [self addSubview:self.labelName];
     }

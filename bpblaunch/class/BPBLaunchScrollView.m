@@ -220,29 +220,35 @@
     // 删除此位置的按钮
     if(index < self.itemViews.count)
     {
+        BPBLaunchItemView* currentItem = [self.itemViews objectAtIndex:index];
+        UIButton* currentButtonDelete = [self.buttonDeletes objectAtIndex:index];
+        [currentButtonDelete removeFromSuperview];
+
         [UIView animateWithDuration:item_delete_animation_duration animations:^{
-            BPBLaunchItemView* currentItem = [self.itemViews objectAtIndex:index];
-            [currentItem removeFromSuperview];
-            UIButton* currentButtonDelete = [self.buttonDeletes objectAtIndex:index];
-            [currentButtonDelete removeFromSuperview];
+
+            CGRect frame = currentItem.frame;
+            frame.size.width = 0;
+            frame.size.height = 0;
+            frame.origin = [self centerAtIndex:index];
+            currentItem.frame = frame;
             
             for (int iCnt = self.itemViews.count - 1; iCnt > index; iCnt--)
             {
                 BPBLaunchItemView* item = (BPBLaunchItemView*)[self.itemViews objectAtIndex:iCnt];
-                BPBLaunchItemView* preItem = (BPBLaunchItemView*)[self.itemViews objectAtIndex:iCnt-1];
-                item.frame = preItem.frame;
-                item.tag = preItem.tag;
+                item.center = [self centerAtIndex:iCnt-1];
+                item.tag = iCnt-1;
                 
                 UIButton* buttonDelete = (UIButton*)[self.buttonDeletes objectAtIndex:iCnt];
-                UIButton* preButtonDelete = (UIButton*)[self.buttonDeletes objectAtIndex:iCnt-1];
-                buttonDelete.frame = preButtonDelete.frame;
-                buttonDelete.tag = preButtonDelete.tag;
+                buttonDelete.center = item.frame.origin;
+                buttonDelete.tag = item.tag;
                 
                 NSLog(@"tag:%d",item.tag);
             }
             [self.itemViews removeObjectAtIndex:index];
             [self.buttonDeletes removeObjectAtIndex:index];
         } completion:^(BOOL finished) {
+            [currentItem removeFromSuperview];
+
             if(self.dataSource && [self.dataSource respondsToSelector:@selector(deleteItemAtIndex:)])
             {
                 id<BPBLaunchScrollViewDataSource> bpbLaunchDataSource = (id<BPBLaunchScrollViewDataSource>)self.dataSource;
