@@ -42,10 +42,10 @@
         
         buttonIcon.layer.shadowColor = [UIColor blackColor].CGColor;
         buttonIcon.layer.shadowOffset = CGSizeMake(0.0, 1.0);
-        buttonIcon.layer.shadowOpacity = 0.5;
-        buttonIcon.layer.masksToBounds = NO; 
+        buttonIcon.layer.shadowOpacity = 1;
+        buttonIcon.layer.masksToBounds = NO;
 
-            
+
         // 增加文字     add title
         self.labelName = [[UILabel alloc]initWithFrame:CGRectMake(0, icon_height + between_title_icon, title_width, title_height)];
         self.labelName.font = title_font;
