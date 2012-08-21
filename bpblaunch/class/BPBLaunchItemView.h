@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-#define cancel_button_width     20
-#define cancel_button_height    20
+#define cancel_button_width     24
+#define cancel_button_height    24
 #define cancel_button_font      [UIFont boldSystemFontOfSize:20]
 #define cancel_button_show_animation_duration   0.3
 
