@@ -50,6 +50,8 @@
 @property (strong,nonatomic) UIImage* imageOfDeleteButton;
 @property (strong,nonatomic) UIColor* nameColor;
 @property (strong,nonatomic) UIColor* nameShadowColor;
+@property (strong,nonatomic) UIColor* iconShadowColor;
+
 
 // 重新加载数据 reloadData
 -(void)reloadData;

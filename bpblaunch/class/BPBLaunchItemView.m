@@ -33,12 +33,18 @@
 
         self.backgroundColor = [UIColor clearColor];
         self.userInteractionEnabled = YES;
-        self.clipsToBounds = YES;
+        self.clipsToBounds = NO;
         
             
         // 添加图标按钮 add icon button
         self.buttonIcon = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, icon_width, icon_height)];
         buttonIcon.clipsToBounds = YES;
+        
+        buttonIcon.layer.shadowColor = [UIColor blackColor].CGColor;
+        buttonIcon.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+        buttonIcon.layer.shadowOpacity = 0.5;
+        buttonIcon.layer.masksToBounds = NO; 
+
             
         // 增加文字     add title
         self.labelName = [[UILabel alloc]initWithFrame:CGRectMake(0, icon_height + between_title_icon, title_width, title_height)];

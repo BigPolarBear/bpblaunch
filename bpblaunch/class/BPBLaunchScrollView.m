@@ -53,6 +53,16 @@
 @synthesize imageUrlPrefixArray;
 
 
+@synthesize iconShadowColor;
+-(void)setIconShadowColor:(UIColor *)newIconShadowColor
+{
+    iconShadowColor = [newIconShadowColor copy];
+    
+    for (BPBLaunchItemView* item in self.itemViews) {
+        item.buttonIcon.layer.shadowColor = iconShadowColor.CGColor;
+    }
+}
+
 @synthesize nameShadowColor;
 -(void)setNameShadowColor:(UIColor *)newNameShadowColor
 {
@@ -549,6 +559,10 @@
             item.labelName.shadowColor = nameShadowColor;
         }
         
+        if(self.iconShadowColor)
+        {
+            item.buttonIcon.layer.shadowColor = self.iconShadowColor.CGColor;
+        }
         
         [self addSubview:item];
         [self addSubview:buttonDelete];

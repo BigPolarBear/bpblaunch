@@ -30,6 +30,7 @@
     self.launchScrollView.contentInset = UIEdgeInsetsMake(12, 12, 16, 16);
     self.launchScrollView.iconCornerRadius = 8;
     self.launchScrollView.nameColor = [UIColor blackColor];
+    self.launchScrollView.iconShadowColor = [UIColor blackColor];
     
     // 设置一行最多放置多少个icon  set max icon number in a row
     self.launchScrollView.numberOfColumns = 4;
