@@ -38,6 +38,9 @@
     self.launchScrollView.dataSource = self;
     self.launchScrollView.delegate = self;
     
+    self.launchScrollView.bounces = YES;
+    self.launchScrollView.alwaysBounceVertical = YES;
+    
     NSString* text = @"abceefghijklmnopqrstuvwxyz";
     UIFont* font = [UIFont boldSystemFontOfSize:20];
     font = [UIFont systemFontOfSize:20];
