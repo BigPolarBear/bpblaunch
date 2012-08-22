@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
 
 @interface BPBTool : NSObject
 
@@ -29,6 +30,10 @@
    prefixArrayOfBundle:(NSArray*)arrayPrefix
             usingCache:(BOOL)usingCache
             completion:(void(^)(BOOL success,UIImage* image,NSError* error))completionHander;
+
+/** 截取当前view作为UIImage */
++(UIImage*)imageFromView:(UIView *)fromView;
+
 
 #pragma mark 文本相关   Text Related
 +(CGSize)textSize:(NSString*)text font:(UIFont*)font;

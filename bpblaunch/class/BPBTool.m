@@ -127,6 +127,17 @@
     }
 }
 
+/** 截取当前view */
++(UIImage*)imageFromView:(UIView *)fromView
+{
+    UIGraphicsBeginImageContext(fromView.bounds.size);
+    [fromView.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
 #pragma mark 文本相关   Text Related
 +(CGSize)textSize:(NSString*)text font:(UIFont*)font
 {
