@@ -34,7 +34,8 @@
 /** 截取当前view作为UIImage */
 +(UIImage*)imageFromView:(UIView *)fromView;
 /** 缩放 */
-+(UIImage *)image:(UIImage *)image toScale:(float)scaleSize;
++(UIImage *)image:(UIImage *)image toScale:(float)scale;
++(UIImage *)image:(UIImage *)image toSize:(CGSize)newSize;
 
 
 #pragma mark 文本相关   Text Related

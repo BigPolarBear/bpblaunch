@@ -138,13 +138,21 @@
     return image;
 }
 
-+(UIImage *)image:(UIImage *)image toScale:(float)scaleSize
++(UIImage *)image:(UIImage *)image toScale:(float)scale
 {
-    UIGraphicsBeginImageContext(CGSizeMake(image.size.width*scaleSize,image.size.height*scaleSize));
-    [image drawInRect:CGRectMake(0, 0,image.size.width * scaleSize, image.size.height *scaleSize)];
+    UIGraphicsBeginImageContext(CGSizeMake(image.size.width*scale,image.size.height*scale));
+    [image drawInRect:CGRectMake(0, 0,image.size.width * scale, image.size.height *scale)];
     UIImage *scaledImage =UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return scaledImage;
+}
++ (UIImage *)image:(UIImage *)image toSize:(CGSize)newSize {
+    //UIGraphicsBeginImageContext(newSize);
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 #pragma mark 文本相关   Text Related
