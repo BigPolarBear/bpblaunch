@@ -187,4 +187,47 @@
     return textSize.height / lineHeight;
 }
 
+/** 判断字符串形式的版本号大小，例如：1.2.1 vs 1.1.2 */
++(BOOL)version:(NSString*)v1 isGreaterThanVersion:(NSString*)v2
+{
+    NSNumberFormatter* nf = [[NSNumberFormatter alloc] init];
+    
+    NSCharacterSet* separatorSet = [NSCharacterSet characterSetWithCharactersInString:@".,"];
+    
+    NSArray* array2 = [v2 componentsSeparatedByCharactersInSet:separatorSet];
+    NSArray* array1 = [v1 componentsSeparatedByCharactersInSet:separatorSet];
+    
+    
+    for(int iCnt = 0; iCnt < array1.count; iCnt++)
+    {
+        BOOL isGreater = NO;
+
+        if(iCnt >= array2.count)
+        {
+            return YES;
+        }
+        
+        NSString* str1 = [array1 objectAtIndex:iCnt];
+        NSString* str2 = [array2 objectAtIndex:iCnt];
+        NSNumber* val1 = [nf numberFromString:str1];
+        NSNumber* val2 = [nf numberFromString:str2];
+        if(val1 != nil && val2 != nil)
+        {
+            isGreater = (val1 > val2);
+        }
+        else
+        {
+            isGreater = (str1 > str2);
+        }
+                
+        
+        if(isGreater)
+        {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 @end

@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 
 #import "ViewController.h"
+#import "BPBTool.h"
 
 @implementation AppDelegate
 
@@ -19,6 +20,15 @@
     self.viewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
+    
+    if([BPBTool version:@"1.1.1" isGreaterThanVersion:@"1.1"]
+       && [BPBTool version:@"1.1.1c" isGreaterThanVersion:@"1.1.1b"]
+       && [BPBTool version:@"1.002" isGreaterThanVersion:@"1.001"]
+       && ![BPBTool version:@"1" isGreaterThanVersion:@"1"])
+    {
+        NSLog(@"test passed.");
+    }
+    
     return YES;
 }
 
