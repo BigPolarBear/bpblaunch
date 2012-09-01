@@ -213,7 +213,7 @@
         NSNumber* val2 = [nf numberFromString:str2];
         if(val1 != nil && val2 != nil)
         {
-            isGreater = (val1 > val2);
+            isGreater = ([val1 compare:val2] == NSOrderedDescending);
         }
         else
         {
