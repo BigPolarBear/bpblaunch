@@ -18,16 +18,22 @@
 #define Color_RGB255(r,g,b,a) [UIColor colorWithRed:(float)r/255 green:(float)g/255 blue:(float)b/255 alpha:a]
 
 #pragma mark 图片加载相关 Image Loading Related
+/** 设置哪些图片url的前缀优先使用本地bundle里的图片资源 set when imageUrl has given urlPrefix then load bundle image with the same name without prefix */
++(void)setImageUrlPrefixesUsingBundle:(NSArray*)arrayPrefix;
++(NSArray*)imageUrlPrefixesUsingBundle;
+
 /** 如果图片的url以给定的地址前缀开头，则尝试加载bundle里去除前缀的同名图片 when imageUrl has given urlPrefix then load bundle image with the same name without prefix */
-+(UIImage*)loadBundleImageWhenImageUrl:(NSString*)imageUrl withPrefix:(NSArray*)arrayPrefix;
++(UIImage*)loadBundleImage:(NSString*)imageUrl;
 
 /** 加载缓存的url地址对应的图片  loading cached image url */
 +(UIImage*)loadCacheImage:(NSString*)urlStr;
 
+/** 加载bundle或cache里的图片*/
++(UIImage*)loadLocalImage:(NSString*)urlStr;
+
 /** 异步加载url地址对应的图片  loading remote image url */
 +(void)loadRemoteImage:(NSString*)urlStr
            usingBundle:(BOOL)usingBundle
-   prefixArrayOfBundle:(NSArray*)arrayPrefix
             usingCache:(BOOL)usingCache
             completion:(void(^)(BOOL success,UIImage* image,NSError* error))completionHander;
 

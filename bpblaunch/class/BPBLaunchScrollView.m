@@ -509,7 +509,7 @@
         BOOL imgAlreadySet = NO;
         NSString* imgUrl = [self.dataSource imageUrlAtIndex:iCnt];
         // 如果bundle里有这个图片则直接加载  if bundle has same image file then use it
-        UIImage* bundleImg = [BPBTool loadBundleImageWhenImageUrl:imgUrl withPrefix:imageUrlPrefixArray];
+        UIImage* bundleImg = [BPBTool loadBundleImage:imgUrl];
         if(bundleImg)
         {
             [item.buttonIcon setImage:bundleImg forState:UIControlStateNormal];
@@ -535,7 +535,6 @@
             
             [BPBTool loadRemoteImage:imgUrl
                          usingBundle:NO
-                 prefixArrayOfBundle:nil
                           usingCache:YES
                           completion:^(BOOL success, UIImage *image, NSError *error)
             {

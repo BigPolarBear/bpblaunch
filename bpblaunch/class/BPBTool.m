@@ -8,11 +8,43 @@
 
 #import "BPBTool.h"
 
+@interface BPBTool()
+{
+}
+
+@end
+
+static NSArray* s_arrayPrefix;
+
 @implementation BPBTool
 
-+(UIImage*)loadBundleImageWhenImageUrl:(NSString*)imageUrl withPrefix:(NSArray*)arrayPrefix
+/** 设置哪些图片url的前缀优先使用本地bundle里的图片资源 set when imageUrl has given urlPrefix then load bundle image with the same name without prefix */
++(void)setImageUrlPrefixesUsingBundle:(NSArray*)arrayPrefix
 {
-    for (NSString* pre in arrayPrefix) {
+    s_arrayPrefix = arrayPrefix;
+}
++(NSArray*)imageUrlPrefixesUsingBundle
+{
+    return s_arrayPrefix;
+}
+
++(UIImage*)loadBundleImage:(NSString*)imageUrl
+{
+    // imageUrl is a file name
+    NSRange range = [imageUrl rangeOfString:@"."];
+    if(range.location != NSNotFound && range.location < imageUrl.length)
+    {
+        NSString* fileName = [imageUrl substringToIndex:range.location];
+        NSString* extensionName = [imageUrl substringFromIndex:range.location+1];
+        NSString* imagePath = [[NSBundle mainBundle] pathForResource:fileName ofType:extensionName];
+        if(imagePath != nil)
+        {
+            // imageUrl is a file name and exist in bundle
+            return [UIImage imageNamed:imageUrl];
+        }
+    }
+    
+    for (NSString* pre in [self imageUrlPrefixesUsingBundle]) {
         if([imageUrl rangeOfString:pre].location == 0)
         {
             NSString* imageName = [imageUrl stringByReplacingOccurrencesOfString:pre withString:@""];
@@ -52,9 +84,19 @@
     }
 }
 
++(UIImage*)loadLocalImage:(NSString*)urlStr
+{
+    UIImage* img = [self loadBundleImage:urlStr];
+    if(!img)
+    {
+        img = [self loadCacheImage:urlStr];
+    }
+    
+    return img;
+}
+
 +(void)loadRemoteImage:(NSString*)urlStr
            usingBundle:(BOOL)usingBundle
-   prefixArrayOfBundle:(NSArray*)arrayPrefix
             usingCache:(BOOL)usingCache
             completion:(void(^)(BOOL success,UIImage* image,NSError* error))completionHander
 {
@@ -62,25 +104,24 @@
     filePath = [filePath stringByAppendingFormat:@"/%@",[urlStr lastPathComponent]];
     NSFileManager* fileManager = [NSFileManager defaultManager];
     
-    UIImage* imageBundle = nil;
-    if(usingBundle && arrayPrefix.count > 0)
+    UIImage* imageLocal = nil;
+    if(usingBundle && [self imageUrlPrefixesUsingBundle].count > 0)
     {
-        imageBundle = [self loadBundleImageWhenImageUrl:urlStr withPrefix:arrayPrefix];
+        imageLocal = [self loadBundleImage:urlStr];
     }
     
-    UIImage* imageCached = nil;
     if (usingCache && [fileManager fileExistsAtPath:filePath])
     {
         // 使用缓存的图片  using cached image
-        imageCached = [UIImage imageWithContentsOfFile:filePath];
+        imageLocal = [UIImage imageWithContentsOfFile:filePath];
     }
         
-    if(imageCached)
+    if(imageLocal)
     {
         // 缓存图片可用   cached image loaded successfully
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(){
             dispatch_sync(dispatch_get_main_queue(), ^(){
-                completionHander(YES,imageCached,nil);
+                completionHander(YES,imageLocal,nil);
                 return;
             });
         });
