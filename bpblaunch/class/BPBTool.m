@@ -100,6 +100,15 @@ static NSArray* s_arrayPrefix;
             usingCache:(BOOL)usingCache
             completion:(void(^)(BOOL success,UIImage* image,NSError* error))completionHander
 {
+    if(urlStr.length == 0)
+    {
+        if(completionHander)
+        {
+            completionHander(NO,nil,nil);
+        }
+        return;
+    }
+    
     NSString* filePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSAllDomainsMask, YES) objectAtIndex:0];
     filePath = [filePath stringByAppendingFormat:@"/%@",[urlStr lastPathComponent]];
     NSFileManager* fileManager = [NSFileManager defaultManager];

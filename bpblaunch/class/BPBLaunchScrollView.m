@@ -50,7 +50,6 @@
 @synthesize defaultIconImage;
 @synthesize allowEnableEditMode;
 @synthesize iconCornerRadius;
-@synthesize imageUrlPrefixArray;
 
 
 @synthesize iconShadowColor;
@@ -153,11 +152,11 @@
     CFTimeInterval pressDuration;
     if(editMode)
     {
-        pressDuration = 0;
+        pressDuration = 0.01;
     }
     else
     {
-        pressDuration = 1;
+        pressDuration = 0.5;
     }
     for (UILongPressGestureRecognizer* recognizer in self.longPressGestureRecognizers) {
         [recognizer setMinimumPressDuration:pressDuration];
@@ -448,9 +447,9 @@
         numberOfRows = numberOfItems / self.numberOfColumns + 1;
     }
 
-    float heightOfContent = total_height * numberOfRows + (numberOfRows-1) * spaceBorder;
-    float widthOfContent = self.frame.size.width;
-    self.contentSize = CGSizeMake(widthOfContent - self.contentInset.left - self.contentInset.right, heightOfContent);
+    float heightOfContent = numberOfRows == 0 ? 0 : total_height * numberOfRows + (numberOfRows-1) * spaceBorder;
+    float widthOfContent = self.frame.size.width - self.contentInset.left - self.contentInset.right;
+    self.contentSize = CGSizeMake(widthOfContent, heightOfContent);
     self.bounces = NO;
     self.alwaysBounceHorizontal = NO;
     

@@ -65,9 +65,6 @@
 
 // 设置图标的圆角 set icon‘s corner radius
 @property (assign,nonatomic) CGFloat iconCornerRadius;
-// 图片地址含给定的前缀的，则尝试去除前缀，加载在bundle内同名文件
-// when imageUrl has given urlPrefix in array then should try load bundle image with the same name without prefix
-@property (strong,nonatomic) NSArray* imageUrlPrefixArray;
 
 
 
