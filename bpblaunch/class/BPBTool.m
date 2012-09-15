@@ -263,7 +263,17 @@ static NSArray* s_arrayPrefix;
         NSNumber* val2 = [nf numberFromString:str2];
         if(val1 != nil && val2 != nil)
         {
-            isGreater = ([val1 compare:val2] == NSOrderedDescending);
+            if([val1 compare:val2] != NSOrderedSame)
+            {
+                if([val1 compare:val2] == NSOrderedAscending)
+                {
+                    return NO;
+                }
+                else
+                {
+                    return YES;
+                }
+            }
         }
         else
         {
