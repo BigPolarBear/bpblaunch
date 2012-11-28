@@ -274,6 +274,10 @@
 
 -(void)handleLongPressGesture:(UIGestureRecognizer*)recognizer
 {
+    if (!self.allowEnableEditMode) {
+        return;
+    }
+    
     CGPoint position = [recognizer locationInView:self];
     NSInteger nearestIndex = [self nearestIndexAtPosition:position];
 
@@ -499,7 +503,7 @@
         item.buttonIcon.layer.cornerRadius = self.iconCornerRadius;
         
         UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
-        longPress.allowableMovement = YES;
+        longPress.allowableMovement = 10;  #error // todo
         [item.buttonIcon addGestureRecognizer:longPress];
         [self.longPressGestureRecognizers addObject:longPress];
         
