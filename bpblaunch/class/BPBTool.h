@@ -52,4 +52,7 @@
 /** 判断字符串形式的版本号大小，例如：1.2.1 vs 1.1.2 */
 +(BOOL)version:(NSString*)v1 isGreaterThanVersion:(NSString*)v2;
 
+
++ (NSString *)GenerateGUID;
+
 @end

@@ -290,4 +290,14 @@ static NSArray* s_arrayPrefix;
     return NO;
 }
 
+
++ (NSString *)GenerateGUID
+{
+    CFUUIDRef theUUID = CFUUIDCreate(NULL);
+    NSString* guid =  (__bridge_transfer NSString*)CFUUIDCreateString(NULL, theUUID);
+    CFRelease(theUUID);
+    guid = [guid stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    return guid;
+}
+
 @end
